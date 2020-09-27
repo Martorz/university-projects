@@ -25,8 +25,8 @@ void setTheFirstGen(int xAxisSize, char **field) {
 	int coordinats[8][2] = {{1, 1}, {2, 1}, {3, 1}, {1, 2}, {2, 2}, {1, 3}, {2, 3}, {3, 3}};
 	//int coordinats[8][2] = {{4, 4}, {5, 4}, {6, 4}, {4, 5}, {5, 5}, {6, 5}, {4, 6}, {6, 6}};
 	for (int i = 0; i < 8; i++) {
-		xToSet = coordinats[i][0];
-		yToSet = coordinats[i][1];
+		xToSet = coordinats[i][1];
+		yToSet = coordinats[i][0];
 
 		field[yToSet][xToSet] = ALIVECELL;
 	}
@@ -142,10 +142,10 @@ int areFieldsEqual(int xAxisSize, int yAxisSize, char **oldField, char **newFiel
 }
 
 void createArray(int xAxisSize, int yAxisSize, char ***field) {
-	*field = calloc(xAxisSize, sizeof(char*));
+	*field = calloc(yAxisSize, sizeof(char*));
 
-	for (int i = 0; i < xAxisSize; i++) {
-		(*field)[i] = calloc(yAxisSize, sizeof(char));
+	for (int i = 0; i < yAxisSize; i++) {
+		(*field)[i] = calloc(xAxisSize, sizeof(char));
 	}
 
 	for (int i = 0; i < yAxisSize; i++) {
@@ -163,14 +163,15 @@ char ** createNextGen(int xAxisSize, int yAxisSize, char **field) {
 	for (int i = 0; i < yAxisSize; i++) {
 		for (int j = 0; j < xAxisSize; j++) {
 			aliveNeighboursNumber = checkAliveNeighbours(i, j, xAxisSize, yAxisSize, field);
+			//printf("x: %d, y: %d, num: %d, old_cell: %c, ", i, j, aliveNeighboursNumber, field[i][j]);
 			if (field[i][j] == DEADCELL && aliveNeighboursNumber == 3) 
-				newField[i][j] = ALIVECELL;
+				newField[j][i] = ALIVECELL;
 			else if (field[i][j] == ALIVECELL && (aliveNeighboursNumber == 3 || aliveNeighboursNumber == 2)) 
-				newField[i][j] = ALIVECELL;
+				newField[j][i] = ALIVECELL;
 			else if (field[i][j] == ALIVECELL && (aliveNeighboursNumber > 3 || aliveNeighboursNumber < 2))
-				newField[i][j] = DEADCELL;
+				newField[j][i] = DEADCELL;
 
-			//printf("y: %d, x: %d, num: %d, cell: %c\n", i, j, aliveNeighboursNumber, newField[i][j]);
+			//printf("newcell: %c\n", newField[j][i]);
 	}
 	}
 	return newField;
@@ -190,7 +191,6 @@ int main(){
 	fieldOutput(xAxisSize, yAxisSize, field);
 
 	nextGen = createNextGen(xAxisSize, yAxisSize, field);
-	//for (int i = 0; i < 1; i++) {
 	while (areFieldsEqual(xAxisSize, yAxisSize, field, nextGen) != 1) {
 		field = nextGen;
 		fieldOutput(xAxisSize, yAxisSize, field);
