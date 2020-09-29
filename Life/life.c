@@ -1,8 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define XSIZE 5
-#define YSIZE 5
 #define ALIVECELL 'o'
 #define DEADCELL ' '
 
@@ -155,7 +153,13 @@ char ** createNextGen(int xAxisSize, int yAxisSize, char **field) {
 }
 
 int main(){
-	int xAxisSize = XSIZE, yAxisSize = YSIZE;
+	FILE *inputFile = fopen("input.rle", "r");
+	int xAxisSize, yAxisSize;
+	//fgets(buffer, 255, (FILE*)inputFile);
+	fscanf(inputFile, "%d", &xAxisSize);
+	fscanf(inputFile, "%d", &yAxisSize);
+    fclose(inputFile);
+
 	char **field, **nextGen;
 	int skipTheLine;
 
@@ -172,4 +176,6 @@ int main(){
 		nextGen = createNextGen(xAxisSize, yAxisSize, field);
 	}
 	printf("The end.\n");
+	free(field);
+	free(nextGen);
 }
