@@ -18,29 +18,14 @@ void fieldOutput(int xAxisSize, int yAxisSize, char **field){
 }
 
 void setTheFirstGen(int xAxisSize, char **field) {
-	printf("Setting the first generation. Enter X and Y. Enter \" E \" to finish.\n");
-
-	char input[30];
 	int xToSet, yToSet;
 	int coordinats[8][2] = {{1, 1}, {2, 1}, {3, 1}, {1, 2}, {2, 2}, {1, 3}, {2, 3}, {3, 3}};
-	//int coordinats[8][2] = {{4, 4}, {5, 4}, {6, 4}, {4, 5}, {5, 5}, {6, 5}, {4, 6}, {6, 6}};
 	for (int i = 0; i < 8; i++) {
 		xToSet = coordinats[i][1];
 		yToSet = coordinats[i][0];
 
 		field[yToSet][xToSet] = ALIVECELL;
 	}
-	/*scanf("%s", input);
-	while (input[0] != 'E') {// 		--> understand how to make it stop on 0
-		//								--> how to add space between nums	
-		//								!! make a check !!
-		xToSet = input[0] - '0';
-		yToSet = input[1] - '0';
-
-		field[yToSet][xToSet] = ALIVECELL;
-
-		scanf("%s", input);
-	}*/
 }
 
 int checkAliveNeighbours(int xPosition, int yPosition, int xAxisSize, int yAxisSize, char **field) {
@@ -53,7 +38,6 @@ int checkAliveNeighbours(int xPosition, int yPosition, int xAxisSize, int yAxisS
 		if (field[0][xPosition + 1] == ALIVECELL) countNeighbours += 1;
 		if (field[1][xPosition] == ALIVECELL) countNeighbours += 1;
 		if (field[1][xPosition + 1] == ALIVECELL) countNeighbours += 1;
-		//printf("[x][ ][ ]\n[ ][ ][ ]\n[ ][ ][ ]\n\n");
 	}
 	else if (xPosition == xAxisSize && yPosition == 0) { //upper right corner
 		if (field[yAxisSize][xPosition] == ALIVECELL) countNeighbours += 1;
@@ -61,7 +45,6 @@ int checkAliveNeighbours(int xPosition, int yPosition, int xAxisSize, int yAxisS
 		if (field[0][xPosition - 1] == ALIVECELL) countNeighbours += 1;
 		if (field[1][xPosition] == ALIVECELL) countNeighbours += 1;
 		if (field[1][xPosition - 1] == ALIVECELL) countNeighbours += 1;
-		//printf("[ ][ ][x]\n[ ][ ][ ]\n[ ][ ][ ]\n\n");
 	}
 	else if (xPosition == 0 && yPosition == yAxisSize) { //down left corner
 		if (field[0][xPosition] == ALIVECELL) countNeighbours += 1;
@@ -69,7 +52,6 @@ int checkAliveNeighbours(int xPosition, int yPosition, int xAxisSize, int yAxisS
 		if (field[yAxisSize][xPosition + 1] == ALIVECELL) countNeighbours += 1;
 		if (field[yAxisSize - 1][xPosition] == ALIVECELL) countNeighbours += 1;
 		if (field[yAxisSize - 1][xPosition + 1] == ALIVECELL) countNeighbours += 1;
-		//printf("[ ][ ][ ]\n[ ][ ][ ]\n[x][ ][ ]\n\n");
 	}
 	else if (xPosition == xAxisSize && yPosition == yAxisSize) { //down right corner
 		if (field[0][xPosition] == ALIVECELL) countNeighbours += 1;
@@ -77,7 +59,6 @@ int checkAliveNeighbours(int xPosition, int yPosition, int xAxisSize, int yAxisS
 		if (field[yAxisSize][xPosition - 1] == ALIVECELL) countNeighbours += 1;
 		if (field[yAxisSize - 1][xPosition] == ALIVECELL) countNeighbours += 1;
 		if (field[yAxisSize - 1][xPosition - 1] == ALIVECELL) countNeighbours += 1;	
-		//printf("[ ][ ][ ]\n[ ][ ][ ]\n[ ][ ][x]\n\n");
 	}
 	else if (yPosition == 0 && xPosition != xAxisSize && xPosition != 0) { //upper border
 		if (field[yAxisSize][xPosition] == ALIVECELL) countNeighbours += 1;
@@ -88,7 +69,6 @@ int checkAliveNeighbours(int xPosition, int yPosition, int xAxisSize, int yAxisS
 		if (field[1][xPosition] == ALIVECELL) countNeighbours += 1;
 		if (field[1][xPosition + 1] == ALIVECELL) countNeighbours += 1;
 		if (field[1][xPosition - 1] == ALIVECELL) countNeighbours += 1;
-		//printf("[ ][x][ ]\n[ ][ ][ ]\n[ ][ ][ ]\n\n");
 	}
 	else if (yPosition == yAxisSize && xPosition != xAxisSize && xPosition != 0) { //lower border
 		if (field[0][xPosition] == ALIVECELL) countNeighbours += 1;
@@ -99,7 +79,6 @@ int checkAliveNeighbours(int xPosition, int yPosition, int xAxisSize, int yAxisS
 		if (field[yAxisSize - 1][xPosition] == ALIVECELL) countNeighbours += 1;
 		if (field[yAxisSize - 1][xPosition + 1] == ALIVECELL) countNeighbours += 1;
 		if (field[yAxisSize - 1][xPosition - 1] == ALIVECELL) countNeighbours += 1;
-		//printf("[ ][ ][ ]\n[ ][ ][ ]\n[ ][x][ ]\n\n");
 	}
 	else if (xPosition == 0 && yPosition != yAxisSize && yPosition != 0) { //left border
 		if (field[yPosition - 1][xPosition] == ALIVECELL) countNeighbours += 1;
@@ -107,7 +86,6 @@ int checkAliveNeighbours(int xPosition, int yPosition, int xAxisSize, int yAxisS
 		if (field[yPosition][xPosition + 1] == ALIVECELL) countNeighbours += 1;
 		if (field[yPosition + 1][xPosition] == ALIVECELL) countNeighbours += 1;
 		if (field[yPosition + 1][xPosition + 1] == ALIVECELL) countNeighbours += 1;
-		//printf("[ ][ ][ ]\n[x][ ][ ]\n[ ][ ][ ]\n\n");
 	}
 	else if (xPosition == xAxisSize && yPosition != yAxisSize && yPosition != 0) { //right border
 		if (field[yPosition - 1][xPosition] == ALIVECELL) countNeighbours += 1;
@@ -115,7 +93,6 @@ int checkAliveNeighbours(int xPosition, int yPosition, int xAxisSize, int yAxisS
 		if (field[yPosition][xPosition - 1] == ALIVECELL) countNeighbours += 1;
 		if (field[yPosition + 1][xPosition] == ALIVECELL) countNeighbours += 1;
 		if (field[yPosition + 1][xPosition - 1] == ALIVECELL) countNeighbours += 1;
-		//printf("[ ][ ][ ]\n[ ][ ][x]\n[ ][ ][ ]\n\n");
 	}
 	else if (xPosition != 0 && xPosition != xAxisSize && yPosition != yAxisSize && yPosition != 0) { //middle space
 		if (field[yPosition - 1][xPosition] == ALIVECELL) countNeighbours += 1;
@@ -126,7 +103,6 @@ int checkAliveNeighbours(int xPosition, int yPosition, int xAxisSize, int yAxisS
 		if (field[yPosition + 1][xPosition] == ALIVECELL) countNeighbours += 1;
 		if (field[yPosition + 1][xPosition + 1] == ALIVECELL) countNeighbours += 1;
 		if (field[yPosition + 1][xPosition - 1] == ALIVECELL) countNeighbours += 1;
-		//printf("[ ][ ][ ]\n[ ][x][ ]\n[ ][ ][ ]\n\n");
 	}
 	return countNeighbours;
 }
@@ -162,16 +138,17 @@ char ** createNextGen(int xAxisSize, int yAxisSize, char **field) {
 
 	for (int i = 0; i < yAxisSize; i++) {
 		for (int j = 0; j < xAxisSize; j++) {
-			aliveNeighboursNumber = checkAliveNeighbours(i, j, xAxisSize, yAxisSize, field);
-			//printf("x: %d, y: %d, num: %d, old_cell: %c, ", i, j, aliveNeighboursNumber, field[i][j]);
-			if (field[i][j] == DEADCELL && aliveNeighboursNumber == 3) 
-				newField[j][i] = ALIVECELL;
-			else if (field[i][j] == ALIVECELL && (aliveNeighboursNumber == 3 || aliveNeighboursNumber == 2)) 
-				newField[j][i] = ALIVECELL;
-			else if (field[i][j] == ALIVECELL && (aliveNeighboursNumber > 3 || aliveNeighboursNumber < 2))
-				newField[j][i] = DEADCELL;
-
-			//printf("newcell: %c\n", newField[j][i]);
+			aliveNeighboursNumber = checkAliveNeighbours(j, i, xAxisSize, yAxisSize, field);
+			//printf("y: %d, x: %d, num: %d, old_cell: %c, ", i, j, aliveNeighboursNumber, field[i][j]);
+			
+				if (field[i][j] == DEADCELL && aliveNeighboursNumber == 3) 
+					newField[i][j] = ALIVECELL;
+				else if (field[i][j] == ALIVECELL && (aliveNeighboursNumber == 3 || aliveNeighboursNumber == 2)) 
+					newField[i][j] = ALIVECELL;
+				else if (field[i][j] == ALIVECELL && (aliveNeighboursNumber > 3 || aliveNeighboursNumber < 2))
+					newField[i][j] = DEADCELL;
+			
+			//printf("newcell: %c\n", newField[i][j]);
 	}
 	}
 	return newField;
@@ -183,9 +160,6 @@ int main(){
 	int skipTheLine;
 
 	createArray(xAxisSize, yAxisSize, &field);
-
-	fieldOutput(xAxisSize, yAxisSize, field);
-	printf("\n");
 
 	setTheFirstGen(xAxisSize, field);
 	fieldOutput(xAxisSize, yAxisSize, field);
