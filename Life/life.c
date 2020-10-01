@@ -5,7 +5,6 @@
 #define DEADCELL ' '
 
 void fieldOutput(int xAxisSize, int yAxisSize, char **field){
-	
 	for (int i = 0; i < yAxisSize; i++) {
 		for (int j = 0; j < xAxisSize; j++) {
 			printf("[%c]", field[i][j]);
@@ -15,13 +14,11 @@ void fieldOutput(int xAxisSize, int yAxisSize, char **field){
 	printf("\n");
 }
 
-void setTheFirstGen(int xAxisSize, char **field) {
+void setTheFirstGen(int xAxisSize, char **field, FILE * inputFile) {
 	int xToSet, yToSet;
-	int coordinats[8][2] = {{1, 1}, {2, 1}, {3, 1}, {1, 2}, {2, 2}, {1, 3}, {2, 3}, {3, 3}};
 	for (int i = 0; i < 8; i++) {
-		xToSet = coordinats[i][1];
-		yToSet = coordinats[i][0];
-
+	//while() {
+		fscanf(inputFile, "%d %d", &xToSet, &yToSet);
 		field[yToSet][xToSet] = ALIVECELL;
 	}
 }
@@ -152,20 +149,24 @@ char ** createNextGen(int xAxisSize, int yAxisSize, char **field) {
 	return newField;
 }
 
-int main(){
-	FILE *inputFile = fopen("input.rle", "r");
+int main(int argc, char** argv){
+	FILE *inputFile = fopen(argv[1], "r");
+	if (inputFile == NULL) {
+		printf("File reading error.\n");
+		return -1;
+	}
 	int xAxisSize, yAxisSize;
 	//fgets(buffer, 255, (FILE*)inputFile);
-	fscanf(inputFile, "%d", &xAxisSize);
-	fscanf(inputFile, "%d", &yAxisSize);
-    fclose(inputFile);
+	fscanf(inputFile, "%d %d", &xAxisSize, &yAxisSize);
+    
 
 	char **field, **nextGen;
 	int skipTheLine;
 
 	createArray(xAxisSize, yAxisSize, &field);
 
-	setTheFirstGen(xAxisSize, field);
+	setTheFirstGen(xAxisSize, field, inputFile);
+	fclose(inputFile);
 	fieldOutput(xAxisSize, yAxisSize, field);
 
 	nextGen = createNextGen(xAxisSize, yAxisSize, field);
