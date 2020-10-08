@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #define ALIVECELL 'o'
 #define DEADCELL ' '
@@ -16,8 +17,8 @@ void fieldOutput(int xAxisSize, int yAxisSize, char **field){
 
 void setTheFirstGen(int xAxisSize, char **field, FILE * inputFile) {
 	int xToSet, yToSet;
-	for (int i = 0; i < 8; i++) {
-	//while() {
+	//for (int i = 0; i < 8; i++) {
+	while(!feof(inputFile)) {
 		fscanf(inputFile, "%d %d", &xToSet, &yToSet);
 		field[yToSet][xToSet] = ALIVECELL;
 	}
@@ -149,6 +150,16 @@ char ** createNextGen(int xAxisSize, int yAxisSize, char **field) {
 	return newField;
 }
 
+int convertToInt(char word[]){
+	int number = 0;
+	for(int i = 0; i < strlen(word); i++){
+		if (word[i] >= '0' && word[i] <= '9') {
+			number = number * 10 + (word[i] - '0');
+		}
+	}
+	return number;
+}
+
 int main(int argc, char** argv){
 	FILE *inputFile = fopen(argv[1], "r");
 	if (inputFile == NULL) {
@@ -156,7 +167,23 @@ int main(int argc, char** argv){
 		return -1;
 	}
 	int xAxisSize, yAxisSize;
-	fscanf(inputFile, "%d %d", &xAxisSize, &yAxisSize);
+	//fscanf(inputFile, "%d %d", &xAxisSize, &yAxisSize);
+	char readingVar[255];
+	while(strcmp(readingVar, "rule") != 0){
+		if (readingVar[0] == '#') {
+		}
+		else if (strcmp(readingVar, "x") == 0) {
+			fscanf(inputFile, "%s", readingVar);
+			fscanf(inputFile, "%s", readingVar);
+			xAxisSize = convertToInt(readingVar);
+		}
+		else if (strcmp(readingVar, "y") == 0){
+			fscanf(inputFile, "%s", readingVar);
+			fscanf(inputFile, "%s", readingVar);
+			yAxisSize = convertToInt(readingVar);
+		}
+		fscanf(inputFile, "%s", readingVar);
+	}
     
 
 	char **field, **nextGen;
