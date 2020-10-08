@@ -16,11 +16,39 @@ void fieldOutput(int xAxisSize, int yAxisSize, char **field){
 }
 
 void setTheFirstGen(int xAxisSize, char **field, FILE * inputFile) {
-	int xToSet, yToSet;
-	//for (int i = 0; i < 8; i++) {
-	while(!feof(inputFile)) {
-		fscanf(inputFile, "%d %d", &xToSet, &yToSet);
-		field[yToSet][xToSet] = ALIVECELL;
+	int xToSet = 0, yToSet = 0, repeats = 1, isLastInt = 0;
+	char readingVar;
+	while(readingVar != '!'){
+		readingVar = fgetc(inputFile);
+		if (readingVar >= '0' && readingVar <= '9') {
+			if (isLastInt == 1){
+				repeats = repeats * 10  + (readingVar - '0');
+			}
+			else {
+				repeats = readingVar - '0';
+			}
+			isLastInt = 1;
+		}
+		else if (readingVar == 'b') {
+			for(int i = 0; i < repeats; i++){
+				xToSet += 1;
+			}
+			repeats = 1;
+			isLastInt = 0;
+		}
+		else if (readingVar == 'o') {
+			for(int i = 0; i < repeats; i++){
+				field[yToSet][xToSet] = ALIVECELL;
+				xToSet += 1;
+			}
+			repeats = 1;
+			isLastInt = 0;
+		}
+		else if (readingVar == '$') {
+			yToSet += 1;
+			xToSet = 0;
+			isLastInt = 0;
+		}
 	}
 }
 
