@@ -156,7 +156,6 @@ int main(int argc, char** argv){
 		return -1;
 	}
 	int xAxisSize, yAxisSize;
-	//fgets(buffer, 255, (FILE*)inputFile);
 	fscanf(inputFile, "%d %d", &xAxisSize, &yAxisSize);
     
 
@@ -177,6 +176,4 @@ int main(int argc, char** argv){
 		nextGen = createNextGen(xAxisSize, yAxisSize, field);
 	}
 	printf("The end.\n");
-	free(field);
-	free(nextGen);
 }
