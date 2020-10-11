@@ -156,7 +156,25 @@ void createArray(int xAxisSize, int yAxisSize, char ***field) {
 	}
 }
 
-char ** createNextGen(int xAxisSize, int yAxisSize, char **field) {
+int matchingTheRuleB(int aliveCells, int ruleB[], int ruleSize){
+	for(int i = 0; i < ruleSize; i++){
+		if (aliveCells == ruleB[i]){
+			return 1;
+		}
+	}
+	return 0;
+}
+
+int matchingTheRuleS(int aliveCells, int ruleS[], int ruleSize){
+	for(int i = 0; i < ruleSize; i++){
+		if (aliveCells == ruleS[i]){
+			return 1;
+		}
+	}
+	return 0;
+}
+
+char ** createNextGen(int xAxisSize, int yAxisSize, char **field, int ruleB[], int ruleS[], int * ruleSize) {
 	char **newField;
 	createArray(xAxisSize, yAxisSize, &newField);
 	int aliveNeighboursNumber = 0;
@@ -165,13 +183,13 @@ char ** createNextGen(int xAxisSize, int yAxisSize, char **field) {
 		for (int j = 0; j < xAxisSize; j++) {
 			aliveNeighboursNumber = checkAliveNeighbours(j, i, xAxisSize, yAxisSize, field);
 			
-				if (field[i][j] == DEADCELL && aliveNeighboursNumber == 3) {
+				if (field[i][j] == DEADCELL && matchingTheRuleB(aliveNeighboursNumber, ruleB, ruleSize[0]) == 1) {
 					newField[i][j] = ALIVECELL;
 				}
-				else if (field[i][j] == ALIVECELL && (aliveNeighboursNumber == 3 || aliveNeighboursNumber == 2)) {
+				else if (field[i][j] == ALIVECELL && matchingTheRuleS(aliveNeighboursNumber, ruleS, ruleSize[1]) == 1) {
 					newField[i][j] = ALIVECELL;
 				}
-				else if (field[i][j] == ALIVECELL && (aliveNeighboursNumber > 3 || aliveNeighboursNumber < 2)) {
+				else if (field[i][j] == ALIVECELL && matchingTheRuleS(aliveNeighboursNumber, ruleS, ruleSize[1]) == 0) {
 					newField[i][j] = DEADCELL;
 				}
 	}
@@ -189,6 +207,27 @@ int convertToInt(char word[]){
 	return number;
 }
 
+int * readRule(int B[], int S[], char word[]) {
+	int i = 1, j = 0;
+	int *ruleSize = calloc(2, sizeof(int));
+	while(word[i] != '/'){
+		B[j] = word[i] - '0';
+		j++;
+		i++;
+		ruleSize[0]++;
+	}
+	i += 2;
+	j = 0;
+	while(i != strlen(word)){
+	//for(int k = i; k < strlen(word); k++){
+		S[j] = word[i] - '0';
+		j++;
+		i++;
+		ruleSize[1]++;
+	}
+	return ruleSize;
+}
+
 int main(int argc, char** argv){
 	FILE *inputFile = fopen(argv[1], "r");
 	if (inputFile == NULL) {
@@ -196,6 +235,8 @@ int main(int argc, char** argv){
 		return -1;
 	}
 	int xAxisSize = 0, yAxisSize = 0;
+	int ruleB[10], ruleS[10];
+	int * ruleSize;
 	char readingVar[255];
 	while(strcmp(readingVar, "rule") != 0){
 		if (readingVar[0] == '#') {
@@ -212,7 +253,9 @@ int main(int argc, char** argv){
 		}
 		fscanf(inputFile, "%s", readingVar);
 	}
-    
+	fscanf(inputFile, "%s", readingVar);
+	fscanf(inputFile, "%s", readingVar);
+	ruleSize = readRule(ruleB, ruleS, readingVar);
 
 	char **field, **nextGen;
 	int skipTheLine = 0;
@@ -223,12 +266,12 @@ int main(int argc, char** argv){
 	fclose(inputFile);
 	fieldOutput(xAxisSize, yAxisSize, field);
 
-	nextGen = createNextGen(xAxisSize, yAxisSize, field);
+	nextGen = createNextGen(xAxisSize, yAxisSize, field, ruleB, ruleS, ruleSize);
 	while (areFieldsEqual(xAxisSize, yAxisSize, field, nextGen) != 1) {
 		field = nextGen;
 		fieldOutput(xAxisSize, yAxisSize, field);
 		skipTheLine = getchar();
-		nextGen = createNextGen(xAxisSize, yAxisSize, field);
+		nextGen = createNextGen(xAxisSize, yAxisSize, field, ruleB, ruleS, ruleSize);
 	}
 	printf("The end.\n");
 }
