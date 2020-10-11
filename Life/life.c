@@ -17,7 +17,7 @@ void fieldOutput(int xAxisSize, int yAxisSize, char **field){
 
 void setTheFirstGen(int xAxisSize, char **field, FILE * inputFile) {
 	int xToSet = 0, yToSet = 0, repeats = 1, isLastInt = 0;
-	char readingVar;
+	char readingVar = 0;
 	while(readingVar != '!'){
 		readingVar = fgetc(inputFile);
 		if (readingVar >= '0' && readingVar <= '9') {
@@ -57,76 +57,76 @@ int checkAliveNeighbours(int xPosition, int yPosition, int xAxisSize, int yAxisS
 	xAxisSize -= 1;
 	yAxisSize -= 1;
 	if (xPosition == 0 && yPosition == 0) { //upper left corner
-		if (field[yAxisSize][xPosition] == ALIVECELL) countNeighbours += 1;
-		if (field[yAxisSize][xPosition + 1] == ALIVECELL) countNeighbours += 1;
-		if (field[0][xPosition + 1] == ALIVECELL) countNeighbours += 1;
-		if (field[1][xPosition] == ALIVECELL) countNeighbours += 1;
-		if (field[1][xPosition + 1] == ALIVECELL) countNeighbours += 1;
+		if (field[yAxisSize][xPosition] == ALIVECELL) { countNeighbours += 1; }
+		if (field[yAxisSize][xPosition + 1] == ALIVECELL) { countNeighbours += 1; }
+		if (field[0][xPosition + 1] == ALIVECELL) { countNeighbours += 1; }
+		if (field[1][xPosition] == ALIVECELL) { countNeighbours += 1; }
+		if (field[1][xPosition + 1] == ALIVECELL) { countNeighbours += 1; }
 	}
 	else if (xPosition == xAxisSize && yPosition == 0) { //upper right corner
-		if (field[yAxisSize][xPosition] == ALIVECELL) countNeighbours += 1;
-		if (field[yAxisSize][xPosition - 1] == ALIVECELL) countNeighbours += 1;
-		if (field[0][xPosition - 1] == ALIVECELL) countNeighbours += 1;
-		if (field[1][xPosition] == ALIVECELL) countNeighbours += 1;
-		if (field[1][xPosition - 1] == ALIVECELL) countNeighbours += 1;
+		if (field[yAxisSize][xPosition] == ALIVECELL) { countNeighbours += 1; }
+		if (field[yAxisSize][xPosition - 1] == ALIVECELL) { countNeighbours += 1; }
+		if (field[0][xPosition - 1] == ALIVECELL) { countNeighbours += 1; }
+		if (field[1][xPosition] == ALIVECELL) { countNeighbours += 1; }
+		if (field[1][xPosition - 1] == ALIVECELL) { countNeighbours += 1; }
 	}
 	else if (xPosition == 0 && yPosition == yAxisSize) { //down left corner
-		if (field[0][xPosition] == ALIVECELL) countNeighbours += 1;
-		if (field[0][xPosition + 1] == ALIVECELL) countNeighbours += 1;
-		if (field[yAxisSize][xPosition + 1] == ALIVECELL) countNeighbours += 1;
-		if (field[yAxisSize - 1][xPosition] == ALIVECELL) countNeighbours += 1;
-		if (field[yAxisSize - 1][xPosition + 1] == ALIVECELL) countNeighbours += 1;
+		if (field[0][xPosition] == ALIVECELL) { countNeighbours += 1; }
+		if (field[0][xPosition + 1] == ALIVECELL) { countNeighbours += 1; }
+		if (field[yAxisSize][xPosition + 1] == ALIVECELL) { countNeighbours += 1; }
+		if (field[yAxisSize - 1][xPosition] == ALIVECELL) { countNeighbours += 1; }
+		if (field[yAxisSize - 1][xPosition + 1] == ALIVECELL) { countNeighbours += 1; }
 	}
 	else if (xPosition == xAxisSize && yPosition == yAxisSize) { //down right corner
-		if (field[0][xPosition] == ALIVECELL) countNeighbours += 1;
-		if (field[0][xPosition - 1] == ALIVECELL) countNeighbours += 1;
-		if (field[yAxisSize][xPosition - 1] == ALIVECELL) countNeighbours += 1;
-		if (field[yAxisSize - 1][xPosition] == ALIVECELL) countNeighbours += 1;
-		if (field[yAxisSize - 1][xPosition - 1] == ALIVECELL) countNeighbours += 1;	
+		if (field[0][xPosition] == ALIVECELL) { countNeighbours += 1; }
+		if (field[0][xPosition - 1] == ALIVECELL) { countNeighbours += 1; }
+		if (field[yAxisSize][xPosition - 1] == ALIVECELL) { countNeighbours += 1; }
+		if (field[yAxisSize - 1][xPosition] == ALIVECELL) { countNeighbours += 1; }
+		if (field[yAxisSize - 1][xPosition - 1] == ALIVECELL) { countNeighbours += 1; }
 	}
 	else if (yPosition == 0 && xPosition != xAxisSize && xPosition != 0) { //upper border
-		if (field[yAxisSize][xPosition] == ALIVECELL) countNeighbours += 1;
-		if (field[yAxisSize][xPosition + 1] == ALIVECELL) countNeighbours += 1;
-		if (field[yAxisSize][xPosition - 1] == ALIVECELL) countNeighbours += 1;
-		if (field[0][xPosition + 1] == ALIVECELL) countNeighbours += 1;
-		if (field[0][xPosition - 1] == ALIVECELL) countNeighbours += 1;
-		if (field[1][xPosition] == ALIVECELL) countNeighbours += 1;
-		if (field[1][xPosition + 1] == ALIVECELL) countNeighbours += 1;
-		if (field[1][xPosition - 1] == ALIVECELL) countNeighbours += 1;
+		if (field[yAxisSize][xPosition] == ALIVECELL) { countNeighbours += 1; }
+		if (field[yAxisSize][xPosition + 1] == ALIVECELL) { countNeighbours += 1; }
+		if (field[yAxisSize][xPosition - 1] == ALIVECELL) { countNeighbours += 1; }
+		if (field[0][xPosition + 1] == ALIVECELL) { countNeighbours += 1; }
+		if (field[0][xPosition - 1] == ALIVECELL) { countNeighbours += 1; }
+		if (field[1][xPosition] == ALIVECELL) { countNeighbours += 1; }
+		if (field[1][xPosition + 1] == ALIVECELL) { countNeighbours += 1; }
+		if (field[1][xPosition - 1] == ALIVECELL) { countNeighbours += 1; }
 	}
 	else if (yPosition == yAxisSize && xPosition != xAxisSize && xPosition != 0) { //lower border
-		if (field[0][xPosition] == ALIVECELL) countNeighbours += 1;
-		if (field[0][xPosition + 1] == ALIVECELL) countNeighbours += 1;
-		if (field[0][xPosition - 1] == ALIVECELL) countNeighbours += 1;
-		if (field[yAxisSize][xPosition + 1] == ALIVECELL) countNeighbours += 1;
-		if (field[yAxisSize][xPosition - 1] == ALIVECELL) countNeighbours += 1;
-		if (field[yAxisSize - 1][xPosition] == ALIVECELL) countNeighbours += 1;
-		if (field[yAxisSize - 1][xPosition + 1] == ALIVECELL) countNeighbours += 1;
-		if (field[yAxisSize - 1][xPosition - 1] == ALIVECELL) countNeighbours += 1;
+		if (field[0][xPosition] == ALIVECELL) { countNeighbours += 1; }
+		if (field[0][xPosition + 1] == ALIVECELL) { countNeighbours += 1; }
+		if (field[0][xPosition - 1] == ALIVECELL) { countNeighbours += 1; }
+		if (field[yAxisSize][xPosition + 1] == ALIVECELL) { countNeighbours += 1; }
+		if (field[yAxisSize][xPosition - 1] == ALIVECELL) { countNeighbours += 1; }
+		if (field[yAxisSize - 1][xPosition] == ALIVECELL) { countNeighbours += 1; }
+		if (field[yAxisSize - 1][xPosition + 1] == ALIVECELL) { countNeighbours += 1; }
+		if (field[yAxisSize - 1][xPosition - 1] == ALIVECELL) { countNeighbours += 1; }
 	}
 	else if (xPosition == 0 && yPosition != yAxisSize && yPosition != 0) { //left border
-		if (field[yPosition - 1][xPosition] == ALIVECELL) countNeighbours += 1;
-		if (field[yPosition - 1][xPosition + 1] == ALIVECELL) countNeighbours += 1;
-		if (field[yPosition][xPosition + 1] == ALIVECELL) countNeighbours += 1;
-		if (field[yPosition + 1][xPosition] == ALIVECELL) countNeighbours += 1;
-		if (field[yPosition + 1][xPosition + 1] == ALIVECELL) countNeighbours += 1;
+		if (field[yPosition - 1][xPosition] == ALIVECELL) { countNeighbours += 1; }
+		if (field[yPosition - 1][xPosition + 1] == ALIVECELL) { countNeighbours += 1; }
+		if (field[yPosition][xPosition + 1] == ALIVECELL) { countNeighbours += 1; }
+		if (field[yPosition + 1][xPosition] == ALIVECELL) { countNeighbours += 1; }
+		if (field[yPosition + 1][xPosition + 1] == ALIVECELL) { countNeighbours += 1; }
 	}
 	else if (xPosition == xAxisSize && yPosition != yAxisSize && yPosition != 0) { //right border
-		if (field[yPosition - 1][xPosition] == ALIVECELL) countNeighbours += 1;
-		if (field[yPosition - 1][xPosition - 1] == ALIVECELL) countNeighbours += 1;
-		if (field[yPosition][xPosition - 1] == ALIVECELL) countNeighbours += 1;
-		if (field[yPosition + 1][xPosition] == ALIVECELL) countNeighbours += 1;
-		if (field[yPosition + 1][xPosition - 1] == ALIVECELL) countNeighbours += 1;
+		if (field[yPosition - 1][xPosition] == ALIVECELL) { countNeighbours += 1; }
+		if (field[yPosition - 1][xPosition - 1] == ALIVECELL) { countNeighbours += 1; }
+		if (field[yPosition][xPosition - 1] == ALIVECELL) { countNeighbours += 1; }
+		if (field[yPosition + 1][xPosition] == ALIVECELL) { countNeighbours += 1; }
+		if (field[yPosition + 1][xPosition - 1] == ALIVECELL) { countNeighbours += 1; }
 	}
 	else if (xPosition != 0 && xPosition != xAxisSize && yPosition != yAxisSize && yPosition != 0) { //middle space
-		if (field[yPosition - 1][xPosition] == ALIVECELL) countNeighbours += 1;
-		if (field[yPosition - 1][xPosition + 1] == ALIVECELL) countNeighbours += 1;
-		if (field[yPosition - 1][xPosition - 1] == ALIVECELL) countNeighbours += 1;
-		if (field[yPosition][xPosition + 1] == ALIVECELL) countNeighbours += 1;
-		if (field[yPosition][xPosition - 1] == ALIVECELL) countNeighbours += 1;
-		if (field[yPosition + 1][xPosition] == ALIVECELL) countNeighbours += 1;
-		if (field[yPosition + 1][xPosition + 1] == ALIVECELL) countNeighbours += 1;
-		if (field[yPosition + 1][xPosition - 1] == ALIVECELL) countNeighbours += 1;
+		if (field[yPosition - 1][xPosition] == ALIVECELL) { countNeighbours += 1; }
+		if (field[yPosition - 1][xPosition + 1] == ALIVECELL) { countNeighbours += 1; }
+		if (field[yPosition - 1][xPosition - 1] == ALIVECELL) { countNeighbours += 1; }
+		if (field[yPosition][xPosition + 1] == ALIVECELL) { countNeighbours += 1; }
+		if (field[yPosition][xPosition - 1] == ALIVECELL) { countNeighbours += 1; }
+		if (field[yPosition + 1][xPosition] == ALIVECELL) { countNeighbours += 1; }
+		if (field[yPosition + 1][xPosition + 1] == ALIVECELL) { countNeighbours += 1; }
+		if (field[yPosition + 1][xPosition - 1] == ALIVECELL) { countNeighbours += 1; }
 	}
 	return countNeighbours;
 }
@@ -134,8 +134,9 @@ int checkAliveNeighbours(int xPosition, int yPosition, int xAxisSize, int yAxisS
 int areFieldsEqual(int xAxisSize, int yAxisSize, char **oldField, char **newField) {
 	for (int i = 0; i < yAxisSize; i++) {
 		for (int j = 0; j < xAxisSize; j++) {
-			if (oldField[i][j] != newField[i][j]) 
+			if (oldField[i][j] != newField[i][j]) {
 				return 0;
+			}
 	}
 	}
 	return 1;
@@ -158,21 +159,21 @@ void createArray(int xAxisSize, int yAxisSize, char ***field) {
 char ** createNextGen(int xAxisSize, int yAxisSize, char **field) {
 	char **newField;
 	createArray(xAxisSize, yAxisSize, &newField);
-	int aliveNeighboursNumber;
+	int aliveNeighboursNumber = 0;
 
 	for (int i = 0; i < yAxisSize; i++) {
 		for (int j = 0; j < xAxisSize; j++) {
 			aliveNeighboursNumber = checkAliveNeighbours(j, i, xAxisSize, yAxisSize, field);
-			//printf("y: %d, x: %d, num: %d, old_cell: %c, ", i, j, aliveNeighboursNumber, field[i][j]);
 			
-				if (field[i][j] == DEADCELL && aliveNeighboursNumber == 3) 
+				if (field[i][j] == DEADCELL && aliveNeighboursNumber == 3) {
 					newField[i][j] = ALIVECELL;
-				else if (field[i][j] == ALIVECELL && (aliveNeighboursNumber == 3 || aliveNeighboursNumber == 2)) 
+				}
+				else if (field[i][j] == ALIVECELL && (aliveNeighboursNumber == 3 || aliveNeighboursNumber == 2)) {
 					newField[i][j] = ALIVECELL;
-				else if (field[i][j] == ALIVECELL && (aliveNeighboursNumber > 3 || aliveNeighboursNumber < 2))
+				}
+				else if (field[i][j] == ALIVECELL && (aliveNeighboursNumber > 3 || aliveNeighboursNumber < 2)) {
 					newField[i][j] = DEADCELL;
-			
-			//printf("newcell: %c\n", newField[i][j]);
+				}
 	}
 	}
 	return newField;
@@ -194,8 +195,7 @@ int main(int argc, char** argv){
 		printf("File reading error.\n");
 		return -1;
 	}
-	int xAxisSize, yAxisSize;
-	//fscanf(inputFile, "%d %d", &xAxisSize, &yAxisSize);
+	int xAxisSize = 0, yAxisSize = 0;
 	char readingVar[255];
 	while(strcmp(readingVar, "rule") != 0){
 		if (readingVar[0] == '#') {
@@ -215,7 +215,7 @@ int main(int argc, char** argv){
     
 
 	char **field, **nextGen;
-	int skipTheLine;
+	int skipTheLine = 0;
 
 	createArray(xAxisSize, yAxisSize, &field);
 
