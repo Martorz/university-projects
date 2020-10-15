@@ -282,10 +282,13 @@ int main(int argc, char** argv){
 	
 	struct gameInfo gInfo;
 	gInfo.xAxisSize = 0, gInfo.yAxisSize = 0;
-	
+
 	char readingVar[255];
 	while(strcmp(readingVar, "rule") != 0){
 		if (readingVar[0] == '#') {
+			while (readingVar[0] != '\n') {
+				readingVar[0] = fgetc(inputFile);
+			}
 		}
 		else if (strcmp(readingVar, "x") == 0) {
 			fscanf(inputFile, "%s", readingVar);
