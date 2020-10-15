@@ -5,9 +5,16 @@
 #define ALIVECELL 'o'
 #define DEADCELL ' '
 
-void fieldOutput(int xAxisSize, int yAxisSize, char **field){
-	for (int i = 0; i < yAxisSize; i++) {
-		for (int j = 0; j < xAxisSize; j++) {
+struct gameInfo {
+	int xAxisSize, yAxisSize;
+	int ruleB[10];
+	int ruleS[10];
+	int * ruleSize;
+};
+
+void fieldOutput(struct gameInfo gInfo, char **field){
+	for (int i = 0; i < gInfo.yAxisSize; i++) {
+		for (int j = 0; j < gInfo.xAxisSize; j++) {
 			printf("[%c]", field[i][j]);
 	}
 		printf("\n");
@@ -15,7 +22,7 @@ void fieldOutput(int xAxisSize, int yAxisSize, char **field){
 	printf("\n");
 }
 
-void setTheFirstGen(int xAxisSize, char **field, FILE * inputFile) {
+void setTheFirstGen(char **field, FILE * inputFile) {
 	int xToSet = 0, yToSet = 0, repeats = 1, isLastInt = 0;
 	char readingVar = 0;
 	while(readingVar != '!'){
@@ -52,73 +59,111 @@ void setTheFirstGen(int xAxisSize, char **field, FILE * inputFile) {
 	}
 }
 
-int checkAliveNeighbours(int xPosition, int yPosition, int xAxisSize, int yAxisSize, char **field) {
+int checkAliveNeighbours(int xPosition, int yPosition, struct gameInfo gInfo, char **field) {
 	int countNeighbours = 0;
-	xAxisSize -= 1;
-	yAxisSize -= 1;
+	gInfo.xAxisSize -= 1;
+	gInfo.yAxisSize -= 1;
+	/*int skipTheLine;
+	if (xPosition == 0){
+		for(int i = yPosition - 1; i <= yPosition + 1; i++){
+			for(int j = xPosition; j <= xPosition + 1; j++){
+				if (field[(i + yAxisSize) % yAxisSize][j] == ALIVECELL)	{
+					countNeighbours++;
+				}
+				printf("x: %d, y: %d, val: %c\n", j, i, field[(i + yAxisSize) % yAxisSize][j]);
+				skipTheLine = getchar();
+			}
+		}
+	}
+	else if (xPosition == xAxisSize){
+		for(int i = yPosition - 1; i <= yPosition + 1; i++){
+			for(int j = xPosition - 1; j <= xAxisSize - 1; j++){
+				if (field[(i + yAxisSize) % yAxisSize][j] == ALIVECELL)	{
+					countNeighbours++;
+				}
+				printf("x: %d, y: %d, val: %c\n", j, i, field[(i + yAxisSize) % yAxisSize][j]);
+				skipTheLine = getchar();
+			}
+		}
+	}
+	else {
+		for(int i = yPosition - 1; i <= yPosition + 1; i++){
+			for(int j = xPosition - 1; j <= xPosition + 1; j++){
+				if (field[(i + yAxisSize) % yAxisSize][j] == ALIVECELL)	{
+					countNeighbours++;
+				}
+				printf("x: %d, y: %d, val: %c\n", j, i, field[(i + yAxisSize) % yAxisSize][j]);
+				skipTheLine = getchar();
+			}
+		}
+	}
+
+	if (field[yPosition][yPosition] == ALIVECELL) countNeighbours--;
+	printf("x: %d, y: %d, c: %d\n", xPosition, yPosition, countNeighbours);
+	*/
 	if (xPosition == 0 && yPosition == 0) { //upper left corner
-		if (field[yAxisSize][xPosition] == ALIVECELL) { countNeighbours += 1; }
-		if (field[yAxisSize][xPosition + 1] == ALIVECELL) { countNeighbours += 1; }
+		if (field[gInfo.yAxisSize][xPosition] == ALIVECELL) { countNeighbours += 1; }
+		if (field[gInfo.yAxisSize][xPosition + 1] == ALIVECELL) { countNeighbours += 1; }
 		if (field[0][xPosition + 1] == ALIVECELL) { countNeighbours += 1; }
 		if (field[1][xPosition] == ALIVECELL) { countNeighbours += 1; }
 		if (field[1][xPosition + 1] == ALIVECELL) { countNeighbours += 1; }
 	}
-	else if (xPosition == xAxisSize && yPosition == 0) { //upper right corner
-		if (field[yAxisSize][xPosition] == ALIVECELL) { countNeighbours += 1; }
-		if (field[yAxisSize][xPosition - 1] == ALIVECELL) { countNeighbours += 1; }
+	else if (xPosition == gInfo.xAxisSize && yPosition == 0) { //upper right corner
+		if (field[gInfo.yAxisSize][xPosition] == ALIVECELL) { countNeighbours += 1; }
+		if (field[gInfo.yAxisSize][xPosition - 1] == ALIVECELL) { countNeighbours += 1; }
 		if (field[0][xPosition - 1] == ALIVECELL) { countNeighbours += 1; }
 		if (field[1][xPosition] == ALIVECELL) { countNeighbours += 1; }
 		if (field[1][xPosition - 1] == ALIVECELL) { countNeighbours += 1; }
 	}
-	else if (xPosition == 0 && yPosition == yAxisSize) { //down left corner
+	else if (xPosition == 0 && yPosition == gInfo.yAxisSize) { //down left corner
 		if (field[0][xPosition] == ALIVECELL) { countNeighbours += 1; }
 		if (field[0][xPosition + 1] == ALIVECELL) { countNeighbours += 1; }
-		if (field[yAxisSize][xPosition + 1] == ALIVECELL) { countNeighbours += 1; }
-		if (field[yAxisSize - 1][xPosition] == ALIVECELL) { countNeighbours += 1; }
-		if (field[yAxisSize - 1][xPosition + 1] == ALIVECELL) { countNeighbours += 1; }
+		if (field[gInfo.yAxisSize][xPosition + 1] == ALIVECELL) { countNeighbours += 1; }
+		if (field[gInfo.yAxisSize - 1][xPosition] == ALIVECELL) { countNeighbours += 1; }
+		if (field[gInfo.yAxisSize - 1][xPosition + 1] == ALIVECELL) { countNeighbours += 1; }
 	}
-	else if (xPosition == xAxisSize && yPosition == yAxisSize) { //down right corner
+	else if (xPosition == gInfo.xAxisSize && yPosition == gInfo.yAxisSize) { //down right corner
 		if (field[0][xPosition] == ALIVECELL) { countNeighbours += 1; }
 		if (field[0][xPosition - 1] == ALIVECELL) { countNeighbours += 1; }
-		if (field[yAxisSize][xPosition - 1] == ALIVECELL) { countNeighbours += 1; }
-		if (field[yAxisSize - 1][xPosition] == ALIVECELL) { countNeighbours += 1; }
-		if (field[yAxisSize - 1][xPosition - 1] == ALIVECELL) { countNeighbours += 1; }
+		if (field[gInfo.yAxisSize][xPosition - 1] == ALIVECELL) { countNeighbours += 1; }
+		if (field[gInfo.yAxisSize - 1][xPosition] == ALIVECELL) { countNeighbours += 1; }
+		if (field[gInfo.yAxisSize - 1][xPosition - 1] == ALIVECELL) { countNeighbours += 1; }
 	}
-	else if (yPosition == 0 && xPosition != xAxisSize && xPosition != 0) { //upper border
-		if (field[yAxisSize][xPosition] == ALIVECELL) { countNeighbours += 1; }
-		if (field[yAxisSize][xPosition + 1] == ALIVECELL) { countNeighbours += 1; }
-		if (field[yAxisSize][xPosition - 1] == ALIVECELL) { countNeighbours += 1; }
+	else if (yPosition == 0 && xPosition != gInfo.xAxisSize && xPosition != 0) { //upper border
+		if (field[gInfo.yAxisSize][xPosition] == ALIVECELL) { countNeighbours += 1; }
+		if (field[gInfo.yAxisSize][xPosition + 1] == ALIVECELL) { countNeighbours += 1; }
+		if (field[gInfo.yAxisSize][xPosition - 1] == ALIVECELL) { countNeighbours += 1; }
 		if (field[0][xPosition + 1] == ALIVECELL) { countNeighbours += 1; }
 		if (field[0][xPosition - 1] == ALIVECELL) { countNeighbours += 1; }
 		if (field[1][xPosition] == ALIVECELL) { countNeighbours += 1; }
 		if (field[1][xPosition + 1] == ALIVECELL) { countNeighbours += 1; }
 		if (field[1][xPosition - 1] == ALIVECELL) { countNeighbours += 1; }
 	}
-	else if (yPosition == yAxisSize && xPosition != xAxisSize && xPosition != 0) { //lower border
+	else if (yPosition == gInfo.yAxisSize && xPosition != gInfo.xAxisSize && xPosition != 0) { //lower border
 		if (field[0][xPosition] == ALIVECELL) { countNeighbours += 1; }
 		if (field[0][xPosition + 1] == ALIVECELL) { countNeighbours += 1; }
 		if (field[0][xPosition - 1] == ALIVECELL) { countNeighbours += 1; }
-		if (field[yAxisSize][xPosition + 1] == ALIVECELL) { countNeighbours += 1; }
-		if (field[yAxisSize][xPosition - 1] == ALIVECELL) { countNeighbours += 1; }
-		if (field[yAxisSize - 1][xPosition] == ALIVECELL) { countNeighbours += 1; }
-		if (field[yAxisSize - 1][xPosition + 1] == ALIVECELL) { countNeighbours += 1; }
-		if (field[yAxisSize - 1][xPosition - 1] == ALIVECELL) { countNeighbours += 1; }
+		if (field[gInfo.yAxisSize][xPosition + 1] == ALIVECELL) { countNeighbours += 1; }
+		if (field[gInfo.yAxisSize][xPosition - 1] == ALIVECELL) { countNeighbours += 1; }
+		if (field[gInfo.yAxisSize - 1][xPosition] == ALIVECELL) { countNeighbours += 1; }
+		if (field[gInfo.yAxisSize - 1][xPosition + 1] == ALIVECELL) { countNeighbours += 1; }
+		if (field[gInfo.yAxisSize - 1][xPosition - 1] == ALIVECELL) { countNeighbours += 1; }
 	}
-	else if (xPosition == 0 && yPosition != yAxisSize && yPosition != 0) { //left border
+	else if (xPosition == 0 && yPosition != gInfo.yAxisSize && yPosition != 0) { //left border
 		if (field[yPosition - 1][xPosition] == ALIVECELL) { countNeighbours += 1; }
 		if (field[yPosition - 1][xPosition + 1] == ALIVECELL) { countNeighbours += 1; }
 		if (field[yPosition][xPosition + 1] == ALIVECELL) { countNeighbours += 1; }
 		if (field[yPosition + 1][xPosition] == ALIVECELL) { countNeighbours += 1; }
 		if (field[yPosition + 1][xPosition + 1] == ALIVECELL) { countNeighbours += 1; }
 	}
-	else if (xPosition == xAxisSize && yPosition != yAxisSize && yPosition != 0) { //right border
+	else if (xPosition == gInfo.xAxisSize && yPosition != gInfo.yAxisSize && yPosition != 0) { //right border
 		if (field[yPosition - 1][xPosition] == ALIVECELL) { countNeighbours += 1; }
 		if (field[yPosition - 1][xPosition - 1] == ALIVECELL) { countNeighbours += 1; }
 		if (field[yPosition][xPosition - 1] == ALIVECELL) { countNeighbours += 1; }
 		if (field[yPosition + 1][xPosition] == ALIVECELL) { countNeighbours += 1; }
 		if (field[yPosition + 1][xPosition - 1] == ALIVECELL) { countNeighbours += 1; }
 	}
-	else if (xPosition != 0 && xPosition != xAxisSize && yPosition != yAxisSize && yPosition != 0) { //middle space
+	else if (xPosition != 0 && xPosition != gInfo.xAxisSize && yPosition != gInfo.yAxisSize && yPosition != 0) { //middle space
 		if (field[yPosition - 1][xPosition] == ALIVECELL) { countNeighbours += 1; }
 		if (field[yPosition - 1][xPosition + 1] == ALIVECELL) { countNeighbours += 1; }
 		if (field[yPosition - 1][xPosition - 1] == ALIVECELL) { countNeighbours += 1; }
@@ -128,12 +173,13 @@ int checkAliveNeighbours(int xPosition, int yPosition, int xAxisSize, int yAxisS
 		if (field[yPosition + 1][xPosition + 1] == ALIVECELL) { countNeighbours += 1; }
 		if (field[yPosition + 1][xPosition - 1] == ALIVECELL) { countNeighbours += 1; }
 	}
+
 	return countNeighbours;
 }
 
-int areFieldsEqual(int xAxisSize, int yAxisSize, char **oldField, char **newField) {
-	for (int i = 0; i < yAxisSize; i++) {
-		for (int j = 0; j < xAxisSize; j++) {
+int areFieldsEqual(struct gameInfo gInfo, char **oldField, char **newField) {
+	for (int i = 0; i < gInfo.yAxisSize; i++) {
+		for (int j = 0; j < gInfo.xAxisSize; j++) {
 			if (oldField[i][j] != newField[i][j]) {
 				return 0;
 			}
@@ -142,15 +188,15 @@ int areFieldsEqual(int xAxisSize, int yAxisSize, char **oldField, char **newFiel
 	return 1;
 }
 
-void createArray(int xAxisSize, int yAxisSize, char ***field) {
-	*field = calloc(yAxisSize, sizeof(char*));
+void createArray(struct gameInfo gInfo, char ***field) {
+	*field = calloc(gInfo.yAxisSize, sizeof(char*));
 
-	for (int i = 0; i < yAxisSize; i++) {
-		(*field)[i] = calloc(xAxisSize, sizeof(char));
+	for (int i = 0; i < gInfo.yAxisSize; i++) {
+		(*field)[i] = calloc(gInfo.xAxisSize, sizeof(char));
 	}
 
-	for (int i = 0; i < yAxisSize; i++) {
-		for (int j = 0; j < xAxisSize; j++) {
+	for (int i = 0; i < gInfo.yAxisSize; i++) {
+		for (int j = 0; j < gInfo.xAxisSize; j++) {
 			(*field)[i][j] = DEADCELL;
 	}
 	}
@@ -174,22 +220,22 @@ int matchingTheRuleS(int aliveCells, int ruleS[], int ruleSize){
 	return 0;
 }
 
-char ** createNextGen(int xAxisSize, int yAxisSize, char **field, int ruleB[], int ruleS[], int * ruleSize) {
+char ** createNextGen(struct gameInfo gInfo, char **field) {
 	char **newField;
-	createArray(xAxisSize, yAxisSize, &newField);
+	createArray(gInfo, &newField);
 	int aliveNeighboursNumber = 0;
 
-	for (int i = 0; i < yAxisSize; i++) {
-		for (int j = 0; j < xAxisSize; j++) {
-			aliveNeighboursNumber = checkAliveNeighbours(j, i, xAxisSize, yAxisSize, field);
+	for (int i = 0; i < gInfo.yAxisSize; i++) {
+		for (int j = 0; j < gInfo.xAxisSize; j++) {
+			aliveNeighboursNumber = checkAliveNeighbours(j, i, gInfo, field);
 			
-				if (field[i][j] == DEADCELL && matchingTheRuleB(aliveNeighboursNumber, ruleB, ruleSize[0]) == 1) {
+				if (field[i][j] == DEADCELL && matchingTheRuleB(aliveNeighboursNumber, gInfo.ruleB, gInfo.ruleSize[0]) == 1) {
 					newField[i][j] = ALIVECELL;
 				}
-				else if (field[i][j] == ALIVECELL && matchingTheRuleS(aliveNeighboursNumber, ruleS, ruleSize[1]) == 1) {
+				else if (field[i][j] == ALIVECELL && matchingTheRuleS(aliveNeighboursNumber, gInfo.ruleS, gInfo.ruleSize[1]) == 1) {
 					newField[i][j] = ALIVECELL;
 				}
-				else if (field[i][j] == ALIVECELL && matchingTheRuleS(aliveNeighboursNumber, ruleS, ruleSize[1]) == 0) {
+				else if (field[i][j] == ALIVECELL && matchingTheRuleS(aliveNeighboursNumber, gInfo.ruleS, gInfo.ruleSize[1]) == 0) {
 					newField[i][j] = DEADCELL;
 				}
 	}
@@ -219,7 +265,6 @@ int * readRule(int B[], int S[], char word[]) {
 	i += 2;
 	j = 0;
 	while(i != strlen(word)){
-	//for(int k = i; k < strlen(word); k++){
 		S[j] = word[i] - '0';
 		j++;
 		i++;
@@ -234,9 +279,10 @@ int main(int argc, char** argv){
 		printf("File reading error.\n");
 		return -1;
 	}
-	int xAxisSize = 0, yAxisSize = 0;
-	int ruleB[10], ruleS[10];
-	int * ruleSize;
+	
+	struct gameInfo gInfo;
+	gInfo.xAxisSize = 0, gInfo.yAxisSize = 0;
+	
 	char readingVar[255];
 	while(strcmp(readingVar, "rule") != 0){
 		if (readingVar[0] == '#') {
@@ -244,34 +290,34 @@ int main(int argc, char** argv){
 		else if (strcmp(readingVar, "x") == 0) {
 			fscanf(inputFile, "%s", readingVar);
 			fscanf(inputFile, "%s", readingVar);
-			xAxisSize = convertToInt(readingVar);
+			gInfo.xAxisSize = convertToInt(readingVar);
 		}
 		else if (strcmp(readingVar, "y") == 0){
 			fscanf(inputFile, "%s", readingVar);
 			fscanf(inputFile, "%s", readingVar);
-			yAxisSize = convertToInt(readingVar);
+			gInfo.yAxisSize = convertToInt(readingVar);
 		}
 		fscanf(inputFile, "%s", readingVar);
 	}
 	fscanf(inputFile, "%s", readingVar);
 	fscanf(inputFile, "%s", readingVar);
-	ruleSize = readRule(ruleB, ruleS, readingVar);
+	gInfo.ruleSize = readRule(gInfo.ruleB, gInfo.ruleS, readingVar);
 
 	char **field, **nextGen;
 	int skipTheLine = 0;
 
-	createArray(xAxisSize, yAxisSize, &field);
+	createArray(gInfo, &field);
 
-	setTheFirstGen(xAxisSize, field, inputFile);
+	setTheFirstGen(field, inputFile);
 	fclose(inputFile);
-	fieldOutput(xAxisSize, yAxisSize, field);
+	fieldOutput(gInfo, field);
 
-	nextGen = createNextGen(xAxisSize, yAxisSize, field, ruleB, ruleS, ruleSize);
-	while (areFieldsEqual(xAxisSize, yAxisSize, field, nextGen) != 1) {
+	nextGen = createNextGen(gInfo, field);
+	while (areFieldsEqual(gInfo, field, nextGen) != 1) {
 		field = nextGen;
-		fieldOutput(xAxisSize, yAxisSize, field);
+		fieldOutput(gInfo, field);
 		skipTheLine = getchar();
-		nextGen = createNextGen(xAxisSize, yAxisSize, field, ruleB, ruleS, ruleSize);
+		nextGen = createNextGen(gInfo, field);
 	}
 	printf("The end.\n");
 }
