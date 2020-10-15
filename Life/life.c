@@ -63,44 +63,6 @@ int checkAliveNeighbours(int xPosition, int yPosition, struct gameInfo gInfo, ch
 	int countNeighbours = 0;
 	gInfo.xAxisSize -= 1;
 	gInfo.yAxisSize -= 1;
-	/*int skipTheLine;
-	if (xPosition == 0){
-		for(int i = yPosition - 1; i <= yPosition + 1; i++){
-			for(int j = xPosition; j <= xPosition + 1; j++){
-				if (field[(i + yAxisSize) % yAxisSize][j] == ALIVECELL)	{
-					countNeighbours++;
-				}
-				printf("x: %d, y: %d, val: %c\n", j, i, field[(i + yAxisSize) % yAxisSize][j]);
-				skipTheLine = getchar();
-			}
-		}
-	}
-	else if (xPosition == xAxisSize){
-		for(int i = yPosition - 1; i <= yPosition + 1; i++){
-			for(int j = xPosition - 1; j <= xAxisSize - 1; j++){
-				if (field[(i + yAxisSize) % yAxisSize][j] == ALIVECELL)	{
-					countNeighbours++;
-				}
-				printf("x: %d, y: %d, val: %c\n", j, i, field[(i + yAxisSize) % yAxisSize][j]);
-				skipTheLine = getchar();
-			}
-		}
-	}
-	else {
-		for(int i = yPosition - 1; i <= yPosition + 1; i++){
-			for(int j = xPosition - 1; j <= xPosition + 1; j++){
-				if (field[(i + yAxisSize) % yAxisSize][j] == ALIVECELL)	{
-					countNeighbours++;
-				}
-				printf("x: %d, y: %d, val: %c\n", j, i, field[(i + yAxisSize) % yAxisSize][j]);
-				skipTheLine = getchar();
-			}
-		}
-	}
-
-	if (field[yPosition][yPosition] == ALIVECELL) countNeighbours--;
-	printf("x: %d, y: %d, c: %d\n", xPosition, yPosition, countNeighbours);
-	*/
 	if (xPosition == 0 && yPosition == 0) { //upper left corner
 		if (field[gInfo.yAxisSize][xPosition] == ALIVECELL) { countNeighbours += 1; }
 		if (field[gInfo.yAxisSize][xPosition + 1] == ALIVECELL) { countNeighbours += 1; }
@@ -322,5 +284,12 @@ int main(int argc, char** argv){
 		skipTheLine = getchar();
 		nextGen = createNextGen(gInfo, field);
 	}
+
+	free(gInfo.ruleSize);
+	for (int i = 0; i < gInfo.yAxisSize; i++) {
+		free(field[i]);
+	}
+	free(field);
+	
 	printf("The end.\n");
 }
