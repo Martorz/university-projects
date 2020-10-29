@@ -50,8 +50,8 @@ int main(int argc, char** argv){
 			}
 		}
 		//fprintf(outputFile, "%s", encryp(currentLetters));    --------------> как записывать в файл?
-		printf("%s ", currentLetters);
-		printf("%s ", encryp(currentLetters, letterAmount));
+		//printf("%s ", currentLetters);
+		printf("%s", encryp(currentLetters, letterAmount));
 	}
 
 	//make char unsigned
