@@ -3,28 +3,24 @@
 
 const char alphabet[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
-char * encryp (unsigned char * input, size_t letterAmount){
-	char * output;
-	char temp[4]; //приходится использовать допольнительный массив, потому что символы не записываются в char*
-	temp[0] = alphabet[(int)(input[0] >> 2)];
+void encryp (int * input, size_t letterAmount, char output[4]){
+	output[0] = alphabet[(int)(input[0] >> 2)];
 	if(letterAmount == 1){
-		temp[1] = alphabet[(int)((input[0] & 3) << 4)];
-		temp[2] = '=';
-		temp[3] = '=';
+		output[1] = alphabet[(int)((input[0] & 3) << 4)];
+		output[2] = '=';
+		output[3] = '=';
 	}
 	else{
-		temp[1] = alphabet[(int)(((input[0] & 3) << 4) | (input[1] >> 4))];
+		output[1] = alphabet[(int)(((input[0] & 3) << 4) | (input[1] >> 4))];
 		if(letterAmount == 2) {
-			temp[2] = alphabet[(int)((input[1] & 15) << 2)];
-			temp[3] = '=';
+			output[2] = alphabet[(int)((input[1] & 15) << 2)];
+			output[3] = '=';
 		}
 		else{
-			temp[2] = alphabet[(int)(((input[1] & 15) << 2) | (input[2] >> 6))];
-			temp[3] = alphabet[(int)(input[2] & 63)];
+			output[2] = alphabet[(int)(((input[1] & 15) << 2) | (input[2] >> 6))];
+			output[3] = alphabet[(int)(input[2] & 63)];
 		}
 	}
-	output = temp;
-	return output;
 }
 
 int main(int argc, char** argv){
@@ -34,31 +30,54 @@ int main(int argc, char** argv){
 		printf("File reading error.\n");
 		return -1;
 	}
-	unsigned char currentLetters[3];
-	size_t letterAmount = 0;
-	//for (size_t i = 0; i < 4; i++){
-	while(!feof(inputFile)){
-		letterAmount = 0;
+	int currentLetters[3];
+
+	while(EOF != currentLetters[0]){
+		int skipTheLine = 0;
+		unsigned char c1, c2, c3;
+		int letterAmount = 0;
+		//int letterAmount = fscanf(inputFile, "%c%c%c", &c1, &c2, &c3);
+		//int letterAmount = fscanf(inputFile, "%c%c%c", &currentLetters[1], &currentLetters[2], &currentLetters[3]);
 		currentLetters[0] = fgetc(inputFile);
-		letterAmount++;
-		if (!feof(inputFile)) {
-			currentLetters[1] = fgetc(inputFile);
+
+		//if (EOF == currentLetters[0]) printf("The End 0, ");
+		//printf("symbol = %d = %c; ", currentLetters[0], currentLetters[0]);
+
+		if (EOF != currentLetters[0]){
 			letterAmount++;
-			if (!feof(inputFile)) {
-				currentLetters[2] = fgetc(inputFile);
+			currentLetters[1] = fgetc(inputFile);
+
+			//if (EOF == currentLetters[1]) printf("The End 1, ");
+			//printf("symbol = %d = %c; ", currentLetters[1], currentLetters[1]);
+			
+			if (EOF != currentLetters[1]){
 				letterAmount++;
+				currentLetters[2] = fgetc(inputFile);
+
+				//if (EOF == currentLetters[2]) printf("The End 2, ");
+				//printf("symbol = %d = %c; ", currentLetters[2], currentLetters[2]);
+				
+				if (EOF != currentLetters[2]){
+					letterAmount++;
+				}
 			}
 		}
-		//fprintf(outputFile, "%s", encryp(currentLetters));    --------------> как записывать в файл?
-		//printf("%s ", currentLetters);
-		printf("%s", encryp(currentLetters, letterAmount));
+		//printf("\n");
+		if(EOF != currentLetters[0]){
+			//printf("%c %c %c\n", currentLetters[0], currentLetters[1], currentLetters[2]);
+			char output[4] = {0};
+			encryp(currentLetters, letterAmount, output);
+			//skipTheLine = getchar();
+			printf("%s", output);
+			//printf("%c\n", currentLetters[0]);
+		}
 	}
 
-	//make char unsigned
-	/*while (!feof(inputFile)){
-		printf("%c ", fgetc(inputFile));
-	}*/
+		//fprintf(outputFile, "%s", encryp(currentLetters));    --------------> как записывать в файл?
+		
+	
 
+	//make char unsigned
 	printf("\n");
 	fclose(inputFile);
 	fclose(outputFile);
