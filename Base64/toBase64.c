@@ -34,42 +34,24 @@ int main(int argc, char** argv){
 
 	while(EOF != currentLetters[0]){
 		int skipTheLine = 0;
-		unsigned char c1, c2, c3;
 		int letterAmount = 0;
-		//int letterAmount = fscanf(inputFile, "%c%c%c", &c1, &c2, &c3);
-		//int letterAmount = fscanf(inputFile, "%c%c%c", &currentLetters[1], &currentLetters[2], &currentLetters[3]);
 		currentLetters[0] = fgetc(inputFile);
-
-		//if (EOF == currentLetters[0]) printf("The End 0, ");
-		//printf("symbol = %d = %c; ", currentLetters[0], currentLetters[0]);
 
 		if (EOF != currentLetters[0]){
 			letterAmount++;
 			currentLetters[1] = fgetc(inputFile);
-
-			//if (EOF == currentLetters[1]) printf("The End 1, ");
-			//printf("symbol = %d = %c; ", currentLetters[1], currentLetters[1]);
 			
 			if (EOF != currentLetters[1]){
 				letterAmount++;
 				currentLetters[2] = fgetc(inputFile);
-
-				//if (EOF == currentLetters[2]) printf("The End 2, ");
-				//printf("symbol = %d = %c; ", currentLetters[2], currentLetters[2]);
 				
 				if (EOF != currentLetters[2]){
 					letterAmount++;
 				}
 			}
-		}
-		//printf("\n");
-		if(EOF != currentLetters[0]){
-			//printf("%c %c %c\n", currentLetters[0], currentLetters[1], currentLetters[2]);
 			char output[4] = {0};
 			encryp(currentLetters, letterAmount, output);
-			//skipTheLine = getchar();
 			printf("%s", output);
-			//printf("%c\n", currentLetters[0]);
 		}
 	}
 
