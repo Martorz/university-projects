@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <stddef.h>
+#include <stdlib.h>
+#include <string.h>
 
 const char alphabet[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
@@ -24,8 +26,20 @@ void encryp (int * input, size_t letterAmount, char output[4]){
 }
 
 int main(int argc, char** argv){
-	FILE * inputFile = fopen(argv[1], "rb");				//сделать проверку входной информации
-	FILE * outputFile = fopen("output", "w");
+	FILE * inputFile = fopen(argv[1], "rb");			//сделать проверку входной информации
+	char * fileName	= calloc(strlen(argv[1]) + 7, sizeof(char));
+	
+	for (int i = 0; i < strlen(argv[1]); i++){
+		fileName[i] = argv[1][i];
+	}
+	fileName[strlen(argv[1])] = '.';
+	fileName[strlen(argv[1]) + 1] = 'b';
+	fileName[strlen(argv[1]) + 2] = 'a';
+	fileName[strlen(argv[1]) + 3] = 's';
+	fileName[strlen(argv[1]) + 4] = 'e';
+	fileName[strlen(argv[1]) + 5] = '6';
+	fileName[strlen(argv[1]) + 6] = '4';
+	FILE * outputFile = fopen(fileName, "w");
 	if (inputFile == NULL){
 		printf("File reading error.\n");
 		return -1;
@@ -33,7 +47,6 @@ int main(int argc, char** argv){
 	int currentLetters[3];
 
 	while(EOF != currentLetters[0]){
-		int skipTheLine = 0;
 		int letterAmount = 0;
 		currentLetters[0] = fgetc(inputFile);
 
@@ -52,14 +65,10 @@ int main(int argc, char** argv){
 			char output[4] = {0};
 			encryp(currentLetters, letterAmount, output);
 			printf("%s", output);
+			fprintf(outputFile, "%s", output);
 		}
-	}
+	}	
 
-		//fprintf(outputFile, "%s", encryp(currentLetters));    --------------> как записывать в файл?
-		
-	
-
-	//make char unsigned
 	printf("\n");
 	fclose(inputFile);
 	fclose(outputFile);
