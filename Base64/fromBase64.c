@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stddef.h>
 #include <string.h>
+#include <stdlib.h>
 
 const char alphabet[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 const int formatNumber = 255;
@@ -25,11 +26,22 @@ void decryp (int * input, char output[3]){
 
 int main(int argc, char** argv){
 	FILE * inputFile = fopen(argv[1], "rb");				//сделать проверку входной информации
-	FILE * outputFile = fopen("output", "w");
 	if (inputFile == NULL){
 		printf("File reading error.\n");
 		return -1;
 	}
+	char * fileName	= calloc(strlen(argv[1]) + 5, sizeof(char)); 	//освободить память
+	
+	for (int i = 0; i < strlen(argv[1]); i++){		//закинуть это в отдельную функцию
+		fileName[i] = argv[1][i];
+	}
+	fileName[strlen(argv[1])] = '.';
+	fileName[strlen(argv[1]) + 1] = 'o';
+	fileName[strlen(argv[1]) + 2] = 'r';
+	fileName[strlen(argv[1]) + 3] = 'i';
+	fileName[strlen(argv[1]) + 4] = 'g';
+	FILE * outputFile = fopen(fileName, "w");
+
 	int currentLetters[4];
 
 	while(EOF != currentLetters[0] && equalSignCode != currentLetters[2] && equalSignCode != currentLetters[3]){
@@ -57,13 +69,10 @@ int main(int argc, char** argv){
 			decryp(currentLetters, output);
 			for (int i = 0; i < letterAmount; i++){
 				printf("%c", output[i]);
+				fprintf(outputFile, "%c", output[i]);
 			}
-			//fprintf(outputFile, "%s", output);
 		}
 	}
-
-		//fprintf(outputFile, "%s", encryp(currentLetters));    --------------> как записывать в файл?
-		//printf("%s ", currentLetters);
 		
 	
 
