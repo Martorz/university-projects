@@ -1,30 +1,19 @@
 #include <stdio.h>
 #include <stddef.h>
+#include <string.h>
 
-const char alphabet[]/* = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"*/;
+const char alphabet[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+const int formatNumber = 255;
 
-char * decryp (unsigned char * input, size_t letterAmount){
-	char * output;
-	char temp[4]; //приходится использовать допольнительный массив, потому что символы не записываются в char*
-	temp[0] = alphabet[(int)(input[0] >> 2)];
-	if(letterAmount == 1){
-		temp[1] = alphabet[(int)((input[0] & 3) << 4)];
-		temp[2] = '=';
-		temp[3] = '=';
-	}
-	else{
-		temp[1] = alphabet[(int)(((input[0] & 3) << 4) | (input[1] >> 4))];
-		if(letterAmount == 2) {
-			temp[2] = alphabet[(int)((input[1] & 15) << 2)];
-			temp[3] = '=';
-		}
-		else{
-			temp[2] = alphabet[(int)(((input[1] & 15) << 2) | (input[2] >> 6))];
-			temp[3] = alphabet[(int)(input[2] & 63)];
-		}
-	}
-	output = temp;
-	return output;
+void decryp (int * input, size_t letterAmount, char output[3]){
+	int origLetter[4];
+	origLetter[0] = strchr(alphabet, (char)input[0]) - alphabet;
+	origLetter[1] = strchr(alphabet, (char)input[1]) - alphabet;
+	origLetter[2] = strchr(alphabet, (char)input[2]) - alphabet;
+	origLetter[3] = strchr(alphabet, (char)input[3]) - alphabet;
+	output[0] = (char)((origLetter[0] << 2) | (origLetter[1] >> 4));
+	output[1] = (char)(((origLetter[1] << 4) & formatNumber) | (origLetter[2] >> 2));
+	output[2] = (char)(((origLetter[2] << 6) & formatNumber) | origLetter[3]);
 }
 
 int main(int argc, char** argv){
@@ -34,25 +23,36 @@ int main(int argc, char** argv){
 		printf("File reading error.\n");
 		return -1;
 	}
-	unsigned char currentLetters[4];
+	int currentLetters[4];
 
-	while(!feof(inputFile)){
-		unsigned char c1, c2, c3, c4;
-		//int letterAmount = fscanf(inputFile, "%c%c%c%c", &c1, &c2, &c3, &c4);
-		//printf("%c %c %c %c\n", c1, c2, c3, c4);
-		int letterAmount = fscanf(inputFile, "%c%c%c", currentLetters[1], currentLetters[2], currentLetters[3]);
-		//printf("%c %c %c\n", currentLetters[1], currentLetters[2], currentLetters[3]);
-		//printf("%d\n", letterAmount);
-		/*currentLetters[0] = fgetc(inputFile);
-		letterAmount++;
-		if (!feof(inputFile)) {
-			currentLetters[1] = fgetc(inputFile);
+	while(EOF != currentLetters[0]){
+		int letterAmount = 0;
+		currentLetters[0] = fgetc(inputFile);
+
+
+		if (EOF != currentLetters[0]){
 			letterAmount++;
-			if (!feof(inputFile)) {
-				currentLetters[2] = fgetc(inputFile);
+			currentLetters[1] = fgetc(inputFile);
+			
+			if (EOF != currentLetters[1]){
 				letterAmount++;
-			}*/
-		printf("%s", decryp(currentLetters, letterAmount));
+				currentLetters[2] = fgetc(inputFile);
+				
+				if (EOF != currentLetters[2]){
+					letterAmount++;
+					currentLetters[3] = fgetc(inputFile);
+					
+					if (EOF != currentLetters[3]){
+						letterAmount++;
+					}
+				}
+			}
+			char output[3] = {0};
+			decryp(currentLetters, letterAmount, output);
+			//printf("%d %d %d %d\n", currentLetters[0], currentLetters[1], currentLetters[2], currentLetters[3]);
+			printf("%c %c %c ", output[0], output[1], output[2]);
+			//fprintf(outputFile, "%s", output);
+		}
 	}
 
 		//fprintf(outputFile, "%s", encryp(currentLetters));    --------------> как записывать в файл?
@@ -60,7 +60,7 @@ int main(int argc, char** argv){
 		
 	
 
-	//make char unsigned
+	printf("\n");
 	fclose(inputFile);
 	fclose(outputFile);
 }

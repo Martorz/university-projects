@@ -27,9 +27,13 @@ void encryp (int * input, size_t letterAmount, char output[4]){
 
 int main(int argc, char** argv){
 	FILE * inputFile = fopen(argv[1], "rb");			//сделать проверку входной информации
-	char * fileName	= calloc(strlen(argv[1]) + 7, sizeof(char));
+	if (inputFile == NULL){
+		printf("File reading error.\n");
+		return -1;
+	}
+	char * fileName	= calloc(strlen(argv[1]) + 7, sizeof(char)); 	//освободить память
 	
-	for (int i = 0; i < strlen(argv[1]); i++){
+	for (int i = 0; i < strlen(argv[1]); i++){		//закинуть это в отдельную функцию
 		fileName[i] = argv[1][i];
 	}
 	fileName[strlen(argv[1])] = '.';
@@ -40,10 +44,7 @@ int main(int argc, char** argv){
 	fileName[strlen(argv[1]) + 5] = '6';
 	fileName[strlen(argv[1]) + 6] = '4';
 	FILE * outputFile = fopen(fileName, "w");
-	if (inputFile == NULL){
-		printf("File reading error.\n");
-		return -1;
-	}
+	
 	int currentLetters[3];
 
 	while(EOF != currentLetters[0]){
