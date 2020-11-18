@@ -30,7 +30,7 @@ int main(int argc, char** argv){
 		printf("File reading error.\n");
 		return -1;
 	}
-	char * fileName	= calloc(strlen(argv[1]) + 5, sizeof(char)); 	//освободить память
+	char * fileName	= calloc(strlen(argv[1]) + 5, sizeof(char));
 	
 	for (int i = 0; i < strlen(argv[1]); i++){		//закинуть это в отдельную функцию
 		fileName[i] = argv[1][i];
@@ -75,8 +75,8 @@ int main(int argc, char** argv){
 	}
 		
 	
-
 	printf("\n");
+	free(fileName);
 	fclose(inputFile);
 	fclose(outputFile);
 }
