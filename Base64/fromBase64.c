@@ -1,3 +1,9 @@
+/*
+Possible errors:
+	- '=' in the middle of a string;
+	- wrong amount/lack of '=' in the end of a string.
+*/
+
 #include <stdio.h>
 #include <stddef.h>
 #include <string.h>
@@ -20,14 +26,26 @@ void decryp (int * input, char output[3]){
 			output[2] = (char)(((origLetter[2] << 6) & formatNumber) | origLetter[3]);
 		}
 	}
-	
-	
+}
+
+int base64Check(int letter){
+	//printf("%d, %c; ", letter, (char)letter);
+	if ((letter >= 65 && letter <= 90) || (letter >= 97 && letter <= 122) || 
+		(letter >= 48 && letter <= 57)  || (letter == 43) || (letter == 47) || 
+		(letter == equalSignCode) || (letter == -1)){
+		//printf("Pass.\n");
+		return 0;
+	}
+	else {
+		//printf("Fail.\n");
+		return 1;
+	}
 }
 
 int main(int argc, char** argv){
 	FILE * inputFile = fopen(argv[1], "rb");				//сделать проверку входной информации
 	if (inputFile == NULL){
-		printf("File reading error.\n");
+		printf("Error: File reading error.\n");
 		return -1;
 	}
 	char * fileName	= calloc(strlen(argv[1]) + 5, sizeof(char));
@@ -47,18 +65,44 @@ int main(int argc, char** argv){
 	while(EOF != currentLetters[0] && equalSignCode != currentLetters[2] && equalSignCode != currentLetters[3]){
 		int letterAmount = 0;
 		currentLetters[0] = fgetc(inputFile);
-
-
+		if (base64Check(currentLetters[0])){
+			free(fileName);
+			fclose(inputFile);
+			fclose(outputFile);
+			printf("\nError: Wrong format.\n");
+			return -1;
+		}
 		if (EOF != currentLetters[0]){
 			currentLetters[1] = fgetc(inputFile);
+			if (base64Check(currentLetters[1])){
+				free(fileName);
+				fclose(inputFile);
+				fclose(outputFile);
+				printf("\nError: Wrong format.\n");
+				return -1;
+			}
 			
 			if (EOF != currentLetters[1]){
 				letterAmount++;
 				currentLetters[2] = fgetc(inputFile);
+				if (base64Check(currentLetters[2])){
+					free(fileName);
+					fclose(inputFile);
+					fclose(outputFile);
+					printf("\nError: Wrong format.\n");
+					return -1;
+				}
 				
 				if (EOF != currentLetters[2] && equalSignCode != currentLetters[2]){
 					letterAmount++;
 					currentLetters[3] = fgetc(inputFile);
+					if (base64Check(currentLetters[3])){
+						free(fileName);
+						fclose(inputFile);
+						fclose(outputFile);
+						printf("\nError: Wrong format.\n");
+						return -1;
+					}
 					
 					if (EOF != currentLetters[3] && equalSignCode != currentLetters[3]){
 						letterAmount++;
