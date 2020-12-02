@@ -4,6 +4,7 @@ Possible errors:
 	- wrong amount/lack of '=' in the end of a string.
 	- invalid file name
 	- too many input arguments
+	- cyrillic letters make program go brrrrr
 */
 
 #include <stdio.h>
@@ -47,16 +48,15 @@ int main(int argc, char** argv){
 	char * inputFileName = argv[1];
 	FILE * inputFile = fopen(inputFileName, "rb");
 	
-	char * fileName	= calloc(strlen(inputFileName) + 5, sizeof(char));
+	int inpFileNMLen = strlen(inputFileName);
+	char * fileSuffix = ".orig";
+	char * fileName	= calloc(inpFileNMLen + 5, sizeof(char));
 	
-	for (int i = 0; i < strlen(argv[1]); i++){		//закинуть это в отдельную функцию
-		fileName[i] = argv[1][i];
+	strncpy(fileName, inputFileName, inpFileNMLen);
+	for (int i = 0; i < 5; i++) {
+		fileName[inpFileNMLen + i] = fileSuffix[i];
 	}
-	fileName[strlen(argv[1])] = '.';
-	fileName[strlen(argv[1]) + 1] = 'o';
-	fileName[strlen(argv[1]) + 2] = 'r';
-	fileName[strlen(argv[1]) + 3] = 'i';
-	fileName[strlen(argv[1]) + 4] = 'g';
+	
 	FILE * outputFile = fopen(fileName, "w");
 
 	int currentLetters[4];
@@ -64,7 +64,7 @@ int main(int argc, char** argv){
 	while(EOF != currentLetters[0] && '=' != currentLetters[2] && '=' != currentLetters[3]){
 		int letterAmount = 0;
 		currentLetters[0] = fgetc(inputFile);
-		if (base64Check(currentLetters[0])){ //можно закинуть в цикл
+		if (base64Check(currentLetters[0])){
 			free(fileName);
 			fclose(inputFile);
 			fclose(outputFile);
@@ -111,7 +111,7 @@ int main(int argc, char** argv){
 			char output[3] = {0};
 			decryp(currentLetters, output);
 			for (int i = 0; i < letterAmount; i++){
-				//printf("%c", output[i]);
+				//printf("%c", output[i]); // --------------------> to print the result
 				fprintf(outputFile, "%c", output[i]);
 			}
 		}
