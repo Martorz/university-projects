@@ -1,6 +1,7 @@
 /*
-	- input information is not being checked
-	- is memory deallocation right?
+Possible errors:
+	- invalid file name
+	- too many input arguments
 */
 
 #include <stdio.h>
@@ -11,33 +12,35 @@
 const char alphabet[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
 void encryp (int * input, size_t letterAmount, char output[4]){
-	output[0] = alphabet[(int)(input[0] >> 2)];
+	output[0] = alphabet[input[0] >> 2];
 	if(letterAmount == 1){
-		output[1] = alphabet[(int)((input[0] & 3) << 4)];
+		output[1] = alphabet[(input[0] & 0x3) << 4];
 		output[2] = '=';
 		output[3] = '=';
 	}
 	else{
-		output[1] = alphabet[(int)(((input[0] & 3) << 4) | (input[1] >> 4))];
+		output[1] = alphabet[((input[0] & 0x3) << 4) | (input[1] >> 4)];
 		if(letterAmount == 2) {
-			output[2] = alphabet[(int)((input[1] & 15) << 2)];
+			output[2] = alphabet[((input[1] & 0xF) << 2)];
 			output[3] = '=';
 		}
 		else{
-			output[2] = alphabet[(int)(((input[1] & 15) << 2) | (input[2] >> 6))];
-			output[3] = alphabet[(int)(input[2] & 63)];
+			output[2] = alphabet[((input[1] & 0xF) << 2) | (input[2] >> 6)];
+			output[3] = alphabet[input[2] & 0x3F];
 		}
 	}
 }
 
 int main(int argc, char** argv){
-	FILE * inputFile = fopen(argv[1], "rb");			//сделать проверку входной информации
-	if (inputFile == NULL){
-		printf("Error: File reading error.\n");
+	if (argv[1] == NULL){
+		printf("Error: File reading error. File name: %s\n", argv[1]);
 		return -1;
 	}
-	char * fileName	= calloc(strlen(argv[1]) + 7, sizeof(char));
+	char * inputFileName = argv[1];
+	FILE * inputFile = fopen(inputFileName, "rb");
 	
+	char * fileName	= calloc(strlen(inputFileName) + 7, sizeof(char));
+	//strncpy - вот все что ниже
 	for (int i = 0; i < strlen(argv[1]); i++){		//закинуть это в отдельную функцию
 		fileName[i] = argv[1][i];
 	}
@@ -70,13 +73,13 @@ int main(int argc, char** argv){
 			}
 			char output[4] = {0};
 			encryp(currentLetters, letterAmount, output);
-			printf("%s", output);
-			fprintf(outputFile, "%s", output);
+			//printf("%s", output);
+			fprintf(outputFile, "%c%c%c%c", output[0], output[1], output[2], output[3]);
 		}
 	}	
 
 	printf("\n");
-	free(fileName); //правильно?
+	free(fileName);
 	fclose(inputFile);
 	fclose(outputFile);
 }
