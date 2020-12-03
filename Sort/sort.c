@@ -55,8 +55,20 @@ int main(int argc, char** argv){
 				reader = fgetc(inputFile);
 			}
 		}
+		//printf("%f\n", number);
 		numArray[i] = number;
+		//printf("%f\n", numArray[i]);
 		i++;
 	} while (i < 100 && EOF != reader && '\n' != reader);
-	printf("\n");
+	//printf("%d\n", i);
+	for (int j = 0; j < i; j++)
+	{
+		printf("%f\n", numArray[j]);
+	}
+
+	mysort(numArray, i);
+	for (int j = 0; j < i; j++)
+	{
+		printf("%f\n", numArray[j]);
+	}
 }

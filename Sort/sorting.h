@@ -1,3 +1,3 @@
-void mysort (void * head, size_t num, size_t size, int (*comparator)(void**, void**));
+void mysort (double * arr, size_t num/*, size_t size, int (*comparator)(void*, void*)*/);
 
-void swap (int * x, int * y);
+void swap (double * x, double * y);
