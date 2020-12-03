@@ -7,6 +7,7 @@
 	- invalid file name
 	- too many input arguments
 	- cyrillic letters make program go brrrrr
+	- input character that are different from nums, space, EOF or .
  */
 
 #include <stddef.h>
@@ -34,5 +35,28 @@ int main(int argc, char** argv){
 		flag = argv[2];
 	}
 
-	//FILE * inputFile = fopen(inputFileName, "rb");
+	FILE * inputFile = fopen(inputFileName, "rb");
+	char reader = 0;
+	int i = 0;
+	float numArray[100];
+	do {
+		float number = 0;
+		reader = fgetc(inputFile);
+		do {
+			number = number * 10 + (reader - '0');
+			reader = fgetc(inputFile);
+		} while (reader >= '0' && reader <= '9');
+		if (reader == '.'){
+			reader = fgetc(inputFile);
+			float floater = 0.1;
+			while (reader >= '0' && reader <= '9') {
+				number = number + (reader - '0') * floater;
+				floater /= 10;
+				reader = fgetc(inputFile);
+			}
+		}
+		numArray[i] = number;
+		i++;
+	} while (i < 100 && EOF != reader && '\n' != reader);
+	printf("\n");
 }
