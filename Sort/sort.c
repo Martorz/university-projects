@@ -6,7 +6,6 @@
  * Possible errors:
 	- invalid file name
 	- too many input arguments
-	- cyrillic letters make program go brrrrr
 	- input character that are different from nums, space, EOF or .
  */
 
@@ -36,39 +35,24 @@ int main(int argc, char** argv){
 	}
 
 	FILE * inputFile = fopen(inputFileName, "rb");
-	char reader = 0;
-	int i = 0;
-	float numArray[100];
+
+	int readResult = 0;
+	int length = 0;
+	double numArray[101];
 	do {
-		float number = 0;
-		reader = fgetc(inputFile);
-		do {
-			number = number * 10 + (reader - '0');
-			reader = fgetc(inputFile);
-		} while (reader >= '0' && reader <= '9');
-		if (reader == '.'){
-			reader = fgetc(inputFile);
-			float floater = 0.1;
-			while (reader >= '0' && reader <= '9') {
-				number = number + (reader - '0') * floater;
-				floater /= 10;
-				reader = fgetc(inputFile);
-			}
-		}
-		//printf("%f\n", number);
-		numArray[i] = number;
-		//printf("%f\n", numArray[i]);
-		i++;
-	} while (i < 100 && EOF != reader && '\n' != reader);
-	//printf("%d\n", i);
-	for (int j = 0; j < i; j++)
+		readResult = fscanf(inputFile, "%lf", &numArray[length]);
+		length++;
+	} while (length <= 100 && readResult > 0);
+	length--;
+
+	for (int j = 0; j < length; j++)
 	{
-		printf("%f\n", numArray[j]);
+		printf("%lf\n", numArray[j]);
 	}
 
-	mysort(numArray, i);
-	for (int j = 0; j < i; j++)
+	mysort(numArray, length, flag);
+	for (int j = 0; j < length; j++)
 	{
-		printf("%f\n", numArray[j]);
+		printf("%lf\n", numArray[j]);
 	}
 }
