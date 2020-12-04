@@ -2,6 +2,6 @@
 1. FINISHED
 2. FINISHED
 3. FINISHED
-4. 1%
+4. 50%
 5. 1%
 6. 1%
