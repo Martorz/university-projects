@@ -12,7 +12,45 @@
 #include <stddef.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 #include "sorting.h"
+
+#define MAX_ITEMS_IN_FILE 100
+
+size_t numLength (size_t number) {
+	size_t counter = 0;
+	while (number > 0) {
+		number /= 10;
+		counter++;
+	}
+	return counter;
+}
+
+char * numToStr (size_t number, size_t numLen) {
+	char * stringNum = calloc(numLen + 1, sizeof(char));
+	//stringNum[numLen] = '';
+	for (int i = numLen - 1; i >= 0; i--) {
+		stringNum[i] = (char)('0' + number % 10);
+		number /= 10;
+	}
+	return stringNum;
+}
+
+char * createFileName(size_t fileCounter) {
+	char * numberEnding = numToStr(fileCounter, numLength(fileCounter));
+	char * outputFileName = calloc(strlen("temp_") + numLength(fileCounter) + 1, sizeof(char));
+	strncpy(outputFileName, "temp_", strlen("temp_") + 1);
+	strcat(outputFileName, numberEnding);
+	free(numberEnding);
+	//outputFileName[strlen("temp_") + numLength(fileCounter)] = '';
+	return outputFileName;
+}
+
+void fillWithZero(double * array, size_t length){
+	for (int i = 0; i < length; i++) {
+		array[i] = 0;
+	}
+}
 
 int main(int argc, char** argv){
 	if (argv[1] == NULL){
@@ -34,21 +72,43 @@ int main(int argc, char** argv){
 		flag = argv[2];
 	}
 
+	int fileCounter = 0;
+	int readResult = 1;
 	FILE * inputFile = fopen(inputFileName, "rb");
+	size_t length = 0;
+	while (readResult > 0) {
+		fileCounter++;
+		//size_t length = 0;
+		length = 0;
+		double numArray[MAX_ITEMS_IN_FILE]; //is it okay to use a const 
+		do {
+			readResult = fscanf(inputFile, "%lf", &numArray[length]);
+			length++;
+		} while (length < MAX_ITEMS_IN_FILE && readResult > 0);
 
-	int readResult = 0;
-	int length = 0;
-	double numArray[101];
-	do {
-		readResult = fscanf(inputFile, "%lf", &numArray[length]);
-		length++;
-	} while (length <= 100 && readResult > 0);
-	length--;
-	
-	if (strcmp(flag, "-ltu") == 0) {
-		mysort(numArray, length, &compareLTU);	
+		if (readResult <= 0) {
+			length--;
+		}
+
+		if (strcmp(flag, "-ltu") == 0) {
+			mysort(numArray, length, &compareLTU);	
+		}
+		else {
+			mysort(numArray, length, &compareUTL);
+		}
+
+		if (length != 0) {
+			FILE * outputFile = fopen(createFileName(fileCounter), "w"); //how to deallocate?
+			for (int i = 0; i < length; i++){
+				fprintf(outputFile, "%lf ", numArray[i]);
+			}
+			fclose(outputFile);
+		}
+
+		fillWithZero(numArray, MAX_ITEMS_IN_FILE);
+		//printf("Length: %ld, read result: %d\n", length, readResult);
 	}
-	else {
-		mysort(numArray, length, &compareUTL);
-	}
+	//printf("Last length: %ld, last read result: %d\n", length, readResult);
+
+	fclose(inputFile);
 }
