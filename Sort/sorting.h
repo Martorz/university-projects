@@ -1,3 +1,7 @@
-void mysort (double * arr, size_t num, char* sortMode/*, size_t size, int (*comparator)(void*, void*)*/);
+void mysort (double * arr, size_t num, void (*comparator)(double*, double*));
 
 void swap (double * x, double * y);
+
+void compareUTL (double * x, double * y);
+
+void compareLTU (double * x, double * y);

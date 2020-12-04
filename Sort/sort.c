@@ -44,15 +44,11 @@ int main(int argc, char** argv){
 		length++;
 	} while (length <= 100 && readResult > 0);
 	length--;
-
-	for (int j = 0; j < length; j++)
-	{
-		printf("%lf\n", numArray[j]);
+	
+	if (strcmp(flag, "-ltu") == 0) {
+		mysort(numArray, length, &compareLTU);	
 	}
-
-	mysort(numArray, length, flag);
-	for (int j = 0; j < length; j++)
-	{
-		printf("%lf\n", numArray[j]);
+	else {
+		mysort(numArray, length, &compareUTL);
 	}
 }
