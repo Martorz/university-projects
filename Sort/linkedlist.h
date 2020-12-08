@@ -9,3 +9,5 @@ void insertByIndex(struct list* h, size_t idx, double data);
 void removeNode(struct list* h, size_t index);
 
 size_t findMinItemID(struct list * arr);
+
+size_t findMaxItemID(struct list * arr);

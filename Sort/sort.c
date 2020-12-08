@@ -18,9 +18,9 @@
 //#include "linkedlist.h"
 
 #define MAX_ITEMS_IN_FILE 100
-#define MAX_FILES_OPENED 10
 
 // ***START OF LINKED LIST***
+// How to put in a separate file?
 
 struct list {
 	double x;
@@ -28,8 +28,9 @@ struct list {
 };
 
 struct list *firstItems = NULL;
+struct list *fileArrayID = NULL; //CRUTCH
 
-void insertLast(double data) {
+void insertLast(double data) { //How to give the head of a list as a parameter?
 
 	struct list *link = calloc(1, sizeof(struct list*));
 
@@ -44,6 +45,24 @@ void insertLast(double data) {
 	}
 	else {
 		firstItems = link;
+	}
+}
+
+void insertLastF(double data) { //CRUTCH
+
+	struct list *link = calloc(1, sizeof(struct list*));
+
+	link->x = data;
+
+   	if (fileArrayID != NULL){
+		struct list* findLast = fileArrayID;
+		while (findLast->next != NULL) {
+	   		findLast = findLast->next;
+		}
+		findLast->next = link;
+	}
+	else {
+		fileArrayID = link;
 	}
 }
 
@@ -66,11 +85,32 @@ void insertByIndex(struct list* h, size_t idx, double data){
 void removeNode(struct list* h, size_t index){
 	int k = 0;
 	struct list *previous = NULL;
-	for (k = 0; k < index; k++){
-		previous = h;
-		h = h->next;
+	if (index == 0) {
+		firstItems = h->next;
 	}
-	previous->next = h->next;
+	else {
+		for (k = 0; k < index; k++){
+			previous = h;
+			h = h->next;
+		}
+		previous->next = h->next;
+	}
+	free(h);
+}
+
+void removeNodeF(struct list* h, size_t index){ //CRUTCH
+	int k = 0;
+	struct list *previous = NULL;
+	if (index == 0) {
+		fileArrayID = h->next;
+	}
+	else {
+		for (k = 0; k < index; k++){
+			previous = h;
+			h = h->next;
+		}
+		previous->next = h->next;
+	}
 	free(h);
 }
 
@@ -80,6 +120,21 @@ size_t findMinItemID(struct list * arr) {
 	double itemValue = getByIndex(arr, itemID);
 	while (arr != NULL) {
 		if (arr->x < itemValue) {
+			itemValue = arr->x;
+			itemID = counter;
+		}
+		counter++;
+		arr = arr->next;
+	}
+	return itemID;
+}
+
+size_t findMaxItemID(struct list * arr) {
+	size_t itemID = 0;
+	size_t counter = 0;
+	double itemValue = getByIndex(arr, itemID);
+	while (arr != NULL) {
+		if (arr->x > itemValue) {
 			itemValue = arr->x;
 			itemID = counter;
 		}
@@ -133,6 +188,10 @@ void readTempFiles(size_t length, FILE ** inputFiles, struct list * firstItems) 
 		free(tempFileName);
 	}
 
+	for (int i = 0; i < length; i++) {
+		insertLastF(i);
+	}
+
 	double reader = 0;
 	for (int i = 0; i < length; i++) {
 		if (NULL != inputFiles[i]) {
@@ -165,19 +224,22 @@ int main(int argc, char** argv){
 	}
 
 	int fileCounter = 0;
+	int entriesCounter = 0;
 	int readResult = 1;
 	FILE * inputFile = fopen(inputFileName, "r");
 	while (readResult > 0) {
-		fileCounter++;
+		
 		size_t length = 0;
 		double numArray[MAX_ITEMS_IN_FILE]; //is it okay to use a const 
 		do {
 			readResult = fscanf(inputFile, "%lf", &numArray[length]);
 			length++;
+			entriesCounter++;
 		} while (length < MAX_ITEMS_IN_FILE && readResult > 0);
 
 		if (readResult <= 0) {
 			length--;
+			entriesCounter--;
 		}
 
 		if (strcmp(flag, "-ltu") == 0) {
@@ -188,6 +250,7 @@ int main(int argc, char** argv){
 		}
 
 		if (length != 0) {
+			fileCounter++;
 			FILE * outputFile = fopen(createFileName(fileCounter), "w"); //how to deallocate?
 			for (int i = 0; i < length; i++){
 				fprintf(outputFile, "%lf ", numArray[i]);
@@ -207,26 +270,39 @@ int main(int argc, char** argv){
 	FILE * outputFile = fopen("output.txt", "w");
 
 	readTempFiles(fileCounter, inputFiles, firstItems);
-	int minItemID;
+	
+	int itemID;
+	size_t (*finder) (struct list *);
+	if (strcmp(flag, "-ltu") == 0) {
+			finder = findMinItemID;
+		}
+	else {
+		finder = findMaxItemID;
+	}
 
-	for (int i = 0; i < 160; i++){
-		minItemID = findMinItemID(firstItems);
-		fprintf(outputFile, "%lf ", getByIndex(firstItems, minItemID));
+	for (int i = 0; i < entriesCounter; i++){
+		itemID = finder(firstItems);
+		fprintf(outputFile, "%lf ", getByIndex(firstItems, itemID));
 		double reader = 0;
-		if (fscanf(inputFiles[minItemID], "%lf", &reader) <= 0) {
-			//removeNode(firstItems, minItemID);
+		if (fscanf(inputFiles[(int)(getByIndex(fileArrayID, itemID))], "%lf", &reader) <= 0) {
+			removeNode(firstItems, itemID);
+			removeNodeF(fileArrayID, itemID);
 		}
 		else {
-			insertByIndex(firstItems, minItemID, reader);
+			insertByIndex(firstItems, itemID, reader);
 		}
 	}
 
-	for (int i = 0; i < fileCounter; i++) {
-		printf("%lf\n", getByIndex(firstItems, i));
-	}
+	// *** DELETING TEMP FILES ***
 
 	for (int i = 0; i < fileCounter; i++) {
 		fclose(inputFiles[i]);
 	}
 	free(inputFiles);
+
+	for (int i = 1; i <= fileCounter; i++) {
+		remove(createFileName(i));
+	}
+
+	fclose(outputFile);
 }
