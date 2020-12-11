@@ -1,26 +1,27 @@
 #include <stdlib.h>
 #include <stddef.h>
 
+
 struct list {
 	double x;
 	struct list* next;
 };
 
-void insertLast(double data) {
+void insertLast(struct list** h, double data) {
 
 	struct list *link = calloc(1, sizeof(struct list*));
 
 	link->x = data;
 
-   	if (firstItems != NULL){
-		struct list* findLast = firstItems;
+   	if (*h != NULL){
+		struct list* findLast = *h;
 		while (findLast->next != NULL) {
 	   		findLast = findLast->next;
 		}
 		findLast->next = link;
 	}
 	else {
-		firstItems = link;
+		*h = link;
 	}
 }
 
@@ -40,11 +41,11 @@ void insertByIndex(struct list* h, size_t idx, double data){
 	h->x = data;
 }
 
-void removeNode(struct list* h, size_t index){
+void removeNode(struct list** changeableHead, struct list* h, size_t index){
 	int k = 0;
 	struct list *previous = NULL;
 	if (index == 0) {
-		firstItems = h->next;
+		*changeableHead = h->next;
 	}
 	else {
 		for (k = 0; k < index; k++){
