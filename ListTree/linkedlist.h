@@ -1,7 +1,10 @@
 #ifndef LINKEDLIST_H
 #define LINKEDLIST_H
 
-struct list;
+struct list {
+	int x;
+	struct list* next;
+};
 
 void insertLast(struct list** h, int data);
 

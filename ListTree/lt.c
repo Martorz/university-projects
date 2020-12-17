@@ -1,7 +1,6 @@
 /*
  * Possible errors:
-	- invalid file name
-	- too many input arguments
+
  */
 
 #include <stddef.h>
@@ -9,13 +8,32 @@
 #include <stdlib.h>
 #include "linkedlist.h"
 #include "mergesort.h"
+#include "tree.h"
 
+int fileExist(char * fileName) {
+	FILE * input;
+    if (input = fopen(fileName, "r")){
+        fclose(input);
+        return 1;
+    }
+    return 0;
+}
 
 int main(int argc, char** argv){
 	if (argv[1] == NULL){
 		printf("Error: File reading error. File name: %s\n", argv[1]);
 		return -1;
 	}
+
+	if (fileExist(argv[1]) == 0) {
+		printf("Error: Invalid file name. File name: %s\n", argv[1]);
+		return -1;
+	}
+
+	if (argv[2] != NULL) {
+		printf("Error: Too many arguments. All the excess arguments will be ignored.");
+	}
+
 	char * inputFileName = argv[1];
 
 	char * sortedListName = mergeSort(inputFileName);
@@ -34,9 +52,16 @@ int main(int argc, char** argv){
 
 	if (readResult <= 0) {
 		listLength--;
+		removeNode(&numberList, numberList, listLength);
 	}
 
-	for (int i = 0; i < listLength; i++) {
-		printf("%d \n", getByIndex(numberList, i));
-	}
+	node * root = NULL;
+
+	root = linkedListIntoVine(numberList, root);
+
+	//printPrefix(root, 0);
+
+	root = vineIntoAVL(root, 19);
+
+	printPrefix(root, 0);
 }
