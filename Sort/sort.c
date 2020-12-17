@@ -4,9 +4,6 @@
 	-utl - upper to lower
 
  * Possible errors:
-	- invalid file name
-	- too many input arguments
-	- input character that are different from nums, space, EOF or .
 	- too many temp files
  */
 
@@ -70,6 +67,15 @@ void readTempFiles(size_t length, FILE ** inputFiles, struct list ** firstItems)
 	}
 }
 
+int fileExist(char * fileName) {
+	FILE * input;
+    if (input = fopen(fileName, "r")){
+        fclose(input);
+        return 1;
+    }
+    return 0;
+}
+
 void sortTempFiles(FILE ** inputFiles, FILE * outputFile, int fileCounter, int entriesCounter, char * flag) {
 	
 	struct list *firstItems = NULL;
@@ -109,6 +115,12 @@ int main(int argc, char** argv){
 		printf("Error: File reading error. File name: %s\n", argv[1]);
 		return -1;
 	}
+
+	if (fileExist(argv[1]) == 0) {
+		printf("Error: Invalid file name. File name: %s\n", argv[1]);
+		return -1;
+	}
+
 	char * inputFileName = argv[1];
 
 	char * flag;
@@ -122,6 +134,10 @@ int main(int argc, char** argv){
 	}
 	else {
 		flag = argv[2];
+	}
+
+	if (argv[3] != NULL) {
+		printf("Error: Too many arguments. All the excess arguments will be ignored.\n");
 	}
 
 	int fileCounter = 0;
@@ -144,10 +160,10 @@ int main(int argc, char** argv){
 		}
 
 		if (strcmp(flag, "-ltu") == 0) {
-			mysort(numArray, length, &compareLTU);	
+			mysort(numArray, length, sizeof(double), compareLTU);	
 		}
 		else {
-			mysort(numArray, length, &compareUTL);
+			mysort(numArray, length, sizeof(double), compareUTL);
 		}
 
 		if (length != 0) {
