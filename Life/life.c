@@ -2,14 +2,17 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define ALIVECELL 'o'
-#define DEADCELL ' '
+#define ALIVECELL 1
+#define DEADCELL 0
+#define ALIVECELL_VIEW 'o'
+#define DEADCELL_VIEW ' '
 
 struct gameInfo {
-	int xAxisSize, yAxisSize;
+	size_t xAxisSize;
+	size_t yAxisSize;
 	int ruleB[10];
 	int ruleS[10];
-	int * ruleSize;
+	int ruleSize[2];
 };
 
 void fieldOutput(struct gameInfo gInfo, char **field){
@@ -25,6 +28,7 @@ void fieldOutput(struct gameInfo gInfo, char **field){
 void setTheFirstGen(char **field, FILE * inputFile) {
 	int xToSet = 0, yToSet = 0, repeats = 1, isLastInt = 0;
 	char readingVar = 0;
+	//isdigit()
 	while(readingVar != '!'){
 		readingVar = fgetc(inputFile);
 		if (readingVar >= '0' && readingVar <= '9') {
@@ -63,6 +67,7 @@ int checkAliveNeighbours(int xPosition, int yPosition, struct gameInfo gInfo, ch
 	int countNeighbours = 0;
 	gInfo.xAxisSize -= 1;
 	gInfo.yAxisSize -= 1;
+	
 	if (xPosition == 0 && yPosition == 0) { //upper left corner
 		if (field[gInfo.yAxisSize][xPosition] == ALIVECELL) { countNeighbours += 1; }
 		if (field[gInfo.yAxisSize][xPosition + 1] == ALIVECELL) { countNeighbours += 1; }
@@ -215,9 +220,9 @@ int convertToInt(char word[]){
 	return number;
 }
 
-int * readRule(int B[], int S[], char word[]) {
+int readRule(int B[], int S[], char word[]) {
 	int i = 1, j = 0;
-	int *ruleSize = calloc(2, sizeof(int));
+	int ruleSize[2] = {0, 0};
 	while(word[i] != '/'){
 		B[j] = word[i] - '0';
 		j++;
@@ -279,17 +284,19 @@ int main(int argc, char** argv){
 
 	nextGen = createNextGen(gInfo, field);
 	while (areFieldsEqual(gInfo, field, nextGen) != 1) {
+		//free for field
 		field = nextGen;
 		fieldOutput(gInfo, field);
 		skipTheLine = getchar();
 		nextGen = createNextGen(gInfo, field);
 	}
+	//free for nextGen
 
 	free(gInfo.ruleSize);
 	for (int i = 0; i < gInfo.yAxisSize; i++) {
 		free(field[i]);
 	}
 	free(field);
-	
+
 	printf("The end.\n");
 }
