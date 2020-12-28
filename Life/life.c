@@ -18,7 +18,12 @@ struct gameInfo {
 void fieldOutput(struct gameInfo gInfo, char **field){
 	for (int i = 0; i < gInfo.yAxisSize; i++) {
 		for (int j = 0; j < gInfo.xAxisSize; j++) {
-			printf("[%c]", field[i][j]);
+			if (field[i][j] == ALIVECELL) {
+				printf("[%c]", ALIVECELL_VIEW);
+			}
+			else {
+				printf("[%c]", DEADCELL_VIEW);
+			}
 	}
 		printf("\n");
 	}
@@ -28,7 +33,6 @@ void fieldOutput(struct gameInfo gInfo, char **field){
 void setTheFirstGen(char **field, FILE * inputFile) {
 	int xToSet = 0, yToSet = 0, repeats = 1, isLastInt = 0;
 	char readingVar = 0;
-	//isdigit()
 	while(readingVar != '!'){
 		readingVar = fgetc(inputFile);
 		if (readingVar >= '0' && readingVar <= '9') {
@@ -169,18 +173,9 @@ void createArray(struct gameInfo gInfo, char ***field) {
 	}
 }
 
-int matchingTheRuleB(int aliveCells, int ruleB[], int ruleSize){
+int matchingTheRule(int aliveCells, int rule[], int ruleSize){
 	for(int i = 0; i < ruleSize; i++){
-		if (aliveCells == ruleB[i]){
-			return 1;
-		}
-	}
-	return 0;
-}
-
-int matchingTheRuleS(int aliveCells, int ruleS[], int ruleSize){
-	for(int i = 0; i < ruleSize; i++){
-		if (aliveCells == ruleS[i]){
+		if (aliveCells == rule[i]){
 			return 1;
 		}
 	}
@@ -196,13 +191,13 @@ char ** createNextGen(struct gameInfo gInfo, char **field) {
 		for (int j = 0; j < gInfo.xAxisSize; j++) {
 			aliveNeighboursNumber = checkAliveNeighbours(j, i, gInfo, field);
 			
-				if (field[i][j] == DEADCELL && matchingTheRuleB(aliveNeighboursNumber, gInfo.ruleB, gInfo.ruleSize[0]) == 1) {
+				if (field[i][j] == DEADCELL && matchingTheRule(aliveNeighboursNumber, gInfo.ruleB, gInfo.ruleSize[0]) == 1) {
 					newField[i][j] = ALIVECELL;
 				}
-				else if (field[i][j] == ALIVECELL && matchingTheRuleS(aliveNeighboursNumber, gInfo.ruleS, gInfo.ruleSize[1]) == 1) {
+				else if (field[i][j] == ALIVECELL && matchingTheRule(aliveNeighboursNumber, gInfo.ruleS, gInfo.ruleSize[1]) == 1) {
 					newField[i][j] = ALIVECELL;
 				}
-				else if (field[i][j] == ALIVECELL && matchingTheRuleS(aliveNeighboursNumber, gInfo.ruleS, gInfo.ruleSize[1]) == 0) {
+				else if (field[i][j] == ALIVECELL && matchingTheRule(aliveNeighboursNumber, gInfo.ruleS, gInfo.ruleSize[1]) == 0) {
 					newField[i][j] = DEADCELL;
 				}
 	}
@@ -220,9 +215,10 @@ int convertToInt(char word[]){
 	return number;
 }
 
-int readRule(int B[], int S[], char word[]) {
+void readRule(int B[], int S[], char word[], int ruleSize[]) {
 	int i = 1, j = 0;
-	int ruleSize[2] = {0, 0};
+	ruleSize[0] = 0;
+	ruleSize[1] = 0;
 	while(word[i] != '/'){
 		B[j] = word[i] - '0';
 		j++;
@@ -237,7 +233,6 @@ int readRule(int B[], int S[], char word[]) {
 		i++;
 		ruleSize[1]++;
 	}
-	return ruleSize;
 }
 
 int main(int argc, char** argv){
@@ -271,7 +266,7 @@ int main(int argc, char** argv){
 	}
 	fscanf(inputFile, "%s", readingVar);
 	fscanf(inputFile, "%s", readingVar);
-	gInfo.ruleSize = readRule(gInfo.ruleB, gInfo.ruleS, readingVar);
+	readRule(gInfo.ruleB, gInfo.ruleS, readingVar, gInfo.ruleSize);
 
 	char **field, **nextGen;
 	int skipTheLine = 0;
@@ -284,19 +279,26 @@ int main(int argc, char** argv){
 
 	nextGen = createNextGen(gInfo, field);
 	while (areFieldsEqual(gInfo, field, nextGen) != 1) {
-		//free for field
+		for (int i = 0; i < gInfo.yAxisSize; i++) {
+			free(field[i]);
+		}
+		free(field);
 		field = nextGen;
 		fieldOutput(gInfo, field);
 		skipTheLine = getchar();
 		nextGen = createNextGen(gInfo, field);
+		
 	}
-	//free for nextGen
+	for (int i = 0; i < gInfo.yAxisSize; i++) {
+		free(nextGen[i]);
+	}
+	free(nextGen);
 
-	free(gInfo.ruleSize);
 	for (int i = 0; i < gInfo.yAxisSize; i++) {
 		free(field[i]);
 	}
 	free(field);
+	
 
 	printf("The end.\n");
 }
