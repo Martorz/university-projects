@@ -235,12 +235,32 @@ void readRule(int B[], int S[], char word[], int ruleSize[]) {
 	}
 }
 
+int fileExist(char * fileName) {
+	FILE * input;
+    if (input = fopen(fileName, "r")){
+        fclose(input);
+        return 1;
+    }
+    return 0;
+}
+
 int main(int argc, char** argv){
-	FILE *inputFile = fopen(argv[1], "r");
-	if (inputFile == NULL) {
-		printf("File reading error.\n");
+	if (argv[1] == NULL){
+		printf("Error: File reading error. File name is missing.\n");
 		return -1;
 	}
+
+	if (fileExist(argv[1]) == 0) {
+		printf("Error: Invalid file name. File name: %s\n", argv[1]);
+		return -1;
+	}
+
+	if (argc != 2) {
+		printf("Error: Too many arguments. All the excess arguments will be ignored.\n");
+	}
+
+	char * inputFileName = argv[1];
+	FILE * inputFile = fopen(inputFileName, "r");
 	
 	struct gameInfo gInfo;
 	gInfo.xAxisSize = 0, gInfo.yAxisSize = 0;
