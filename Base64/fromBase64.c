@@ -2,9 +2,6 @@
 Possible errors:
 	- '=' in the middle of a string;
 	- wrong amount/lack of '=' in the end of a string.
-	- invalid file name
-	- too many input arguments
-	- cyrillic letters make program go brrrrr
 */
 
 #include <stdio.h>
@@ -40,11 +37,30 @@ int base64Check(int letter){
 	}
 }
 
+int fileExist(char * fileName) {
+	FILE * input;
+    if (input = fopen(fileName, "r")){
+        fclose(input);
+        return 1;
+    }
+    return 0;
+}
+
 int main(int argc, char** argv){
 	if (argv[1] == NULL){
-		printf("Error: File reading error. File name: %s\n", argv[1]);
+		printf("Error: File reading error. File name is missing.\n");
 		return -1;
 	}
+
+	if (fileExist(argv[1]) == 0) {
+		printf("Error: Invalid file name. File name: %s\n", argv[1]);
+		return -1;
+	}
+
+	if (argc != 2) {
+		printf("Error: Too many arguments. All the excess arguments will be ignored.\n");
+	}
+
 	char * inputFileName = argv[1];
 	FILE * inputFile = fopen(inputFileName, "rb");
 	
