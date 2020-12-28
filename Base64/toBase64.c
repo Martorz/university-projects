@@ -42,9 +42,10 @@ int main(int argc, char** argv){
 	
 	int inpFileNMLen = strlen(inputFileName);
 	char * fileSuffix = ".base64";
-	char * fileName	= calloc(inpFileNMLen + 7, sizeof(char));
+	int flSuffLen = strlen(fileSuffix) + 1;
+	char * fileName	= calloc(inpFileNMLen + flSuffLen, sizeof(char));
 	strncpy(fileName, inputFileName, inpFileNMLen);
-	for (int i = 0; i < 7; i++) {
+	for (int i = 0; i < flSuffLen; i++) {
 		fileName[inpFileNMLen + i] = fileSuffix[i];
 	}
 
