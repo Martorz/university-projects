@@ -26,7 +26,7 @@ void insertLast(struct list** h, int data) {
 }
 
 int getByIndex(struct list* h, size_t idx){
-	int k = 0;
+	size_t k = 0;
 	for (k = 0; k < idx; k++){
 		h = h->next;
 	}
@@ -34,7 +34,7 @@ int getByIndex(struct list* h, size_t idx){
 }
 
 void insertByIndex(struct list* h, size_t idx, int data){
-	int k = 0;
+	size_t k = 0;
 	for (k = 0; k < idx; k++){
 		h = h->next;
 	}
@@ -42,7 +42,7 @@ void insertByIndex(struct list* h, size_t idx, int data){
 }
 
 void removeNode(struct list** changeableHead, struct list* h, size_t index){
-	int k = 0;
+	size_t k = 0;
 	struct list *previous = NULL;
 	if (index == 0) {
 		*changeableHead = h->next;
@@ -85,4 +85,12 @@ size_t findMaxItemID(struct list * arr) {
 		arr = arr->next;
 	}
 	return itemID;
+}
+
+void clearList(struct list * arr){
+	if (arr == NULL) {
+		return;
+	}
+	clearList(arr->next);
+	free(arr);
 }

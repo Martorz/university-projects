@@ -56,12 +56,13 @@ int main(int argc, char** argv){
 	}
 
 	node * root = NULL;
-
-	root = linkedListIntoVine(numberList, root);
-
-	//printPrefix(root, 0);
-
-	root = vineIntoAVL(root, 19);
+	root = linkedListIntoAVL(numberList, listLength);
 
 	printPrefix(root, 0);
+
+	clearTree(root);
+	clearList(numberList);
+	fclose(inputFile);
+	remove(sortedListName);
+
 }

@@ -41,20 +41,20 @@ char * createFileName(size_t fileCounter) {
 }
 
 void fillWithZero(int * array, size_t length){ //change for memset
-	for (int i = 0; i < length; i++) {
+	for (int i = 0; i < (int)length; i++) {
 		array[i] = 0;
 	}
 }
 
 void readTempFiles(size_t length, FILE ** inputFiles, struct list ** firstItems) {
-	for (int i = 0; i < length; i++) {
+	for (int i = 0; i < (int)length; i++) {
 		char * tempFileName = createFileName(i + 1);
 		inputFiles[i] = fopen(tempFileName, "r");
 		free(tempFileName);
 	}
 
 	int reader = 0;
-	for (int i = 0; i < length; i++) {
+	for (int i = 0; i < (int)length; i++) {
 		if (NULL != inputFiles[i]) {
 			fscanf(inputFiles[i], "%d", &reader);
 			insertLast(firstItems, reader);
@@ -119,7 +119,7 @@ char * mergeSort(char * inputFileName) {
 			char * tempFileName = createFileName(fileCounter);
 			FILE * outputFile = fopen(tempFileName, "w");
 			free(tempFileName);
-			for (int i = 0; i < length; i++){
+			for (int i = 0; i < (int)length; i++){
 				fprintf(outputFile, "%d ", numArray[i]);
 			}
 			fclose(outputFile);

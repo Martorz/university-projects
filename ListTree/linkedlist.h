@@ -18,4 +18,6 @@ size_t findMinItemID(struct list * arr);
 
 size_t findMaxItemID(struct list * arr);
 
+void clearList(struct list * arr);
+
 #endif
