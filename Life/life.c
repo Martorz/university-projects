@@ -259,7 +259,7 @@ int main(int argc, char** argv){
 		printf("Error: Too many arguments. All the excess arguments will be ignored.\n");
 	}
 
-	char * inputFileName = argv[1];
+	const char * inputFileName = argv[1];
 	FILE * inputFile = fopen(inputFileName, "r");
 	
 	struct gameInfo gInfo;
