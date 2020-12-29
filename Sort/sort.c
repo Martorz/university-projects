@@ -36,9 +36,10 @@ char * numToStr (size_t number, size_t numLen) {
 }
 
 char * createFileName(size_t fileCounter) {
+	const char * tempName = "temp_";
 	char * numberEnding = numToStr(fileCounter, numLength(fileCounter));
-	char * outputFileName = calloc(strlen("temp_") + numLength(fileCounter) + 1, sizeof(char));
-	strncpy(outputFileName, "temp_", strlen("temp_") + 1);
+	char * outputFileName = calloc(strlen(tempName) + numLength(fileCounter) + 1, sizeof(char));
+	strncpy(outputFileName, tempName, strlen(tempName) + 1);
 	strcat(outputFileName, numberEnding);
 	free(numberEnding);
 	//outputFileName[strlen("temp_") + numLength(fileCounter)] = '';
@@ -46,24 +47,8 @@ char * createFileName(size_t fileCounter) {
 }
 
 void fillWithZero(double * array, size_t length){ //change for memset
-	for (int i = 0; i < length; i++) {
+	for (int i = 0; i < (int)length; i++) {
 		array[i] = 0;
-	}
-}
-
-void readTempFiles(size_t length, FILE ** inputFiles, struct list ** firstItems) {
-	for (int i = 0; i < length; i++) {
-		char * tempFileName = createFileName(i + 1);
-		inputFiles[i] = fopen(tempFileName, "r");
-		free(tempFileName);
-	}
-
-	double reader = 0;
-	for (int i = 0; i < length; i++) {
-		if (NULL != inputFiles[i]) {
-			fscanf(inputFiles[i], "%lf", &reader);
-			insertLast(firstItems, reader);
-		}
 	}
 }
 
@@ -74,6 +59,29 @@ int fileExist(char * fileName) {
         return 1;
     }
     return 0;
+}
+
+void readTempFiles(size_t length, FILE ** inputFiles, struct list ** firstItems) {
+	for (int i = 0; i < (int)length; i++) {
+		char * tempFileName = createFileName(i + 1);
+		// ----------------------------------------------------------------------------------> GARBAGE
+		if (fileExist(tempFileName) == 0) {
+			printf("Error: Invalid file name. File name: %s\n", tempFileName);
+			i--;
+		}
+		else{
+			inputFiles[i] = fopen(tempFileName, "r");
+		}
+		free(tempFileName);
+	}
+
+	double reader = 0;
+	for (int i = 0; i < (int)length; i++) { //путаница с сайз т и интом
+		if (NULL != inputFiles[i]) {
+			fscanf(inputFiles[i], "%lf", &reader);
+			insertLast(firstItems, reader);
+		}
+	}
 }
 
 void sortTempFiles(FILE ** inputFiles, FILE * outputFile, int fileCounter, int entriesCounter, char * flag) {
@@ -101,18 +109,21 @@ void sortTempFiles(FILE ** inputFiles, FILE * outputFile, int fileCounter, int e
 		fprintf(outputFile, "%lf ", getByIndex(firstItems, itemID));
 		double reader = 0;
 		if (fscanf(inputFiles[(int)(getByIndex(fileArrayID, itemID))], "%lf", &reader) <= 0) {
-			removeNode(&firstItems, firstItems, itemID);
-			removeNode(&fileArrayID, fileArrayID, itemID);
+			removeNode(&firstItems, itemID);
+			removeNode(&fileArrayID, itemID);
 		}
 		else {
 			insertByIndex(firstItems, itemID, reader);
 		}
 	}
+
+	clearList(firstItems);
+	clearList(fileArrayID);
 }
 
 int main(int argc, char** argv){
-	if (argv[1] == NULL){ //лучше проверять argc
-		printf("Error: File reading error. File name: %s\n", argv[1]);
+	if (argv[1] == NULL){
+		printf("Error: File reading error. File name is missing.\n");
 		return -1;
 	}
 
@@ -121,10 +132,10 @@ int main(int argc, char** argv){
 		return -1;
 	}
 
-	char * inputFileName = argv[1];
+	const char * inputFileName = argv[1];
 
 	char * flag;
-	if (argv[2] == NULL){
+	if (argc < 3){
 		printf("Error: Flag is missing. Default flag is set: -ltu.\n");
 		flag = "-ltu";
 	}
@@ -136,7 +147,7 @@ int main(int argc, char** argv){
 		flag = argv[2];
 	}
 
-	if (argv[3] != NULL) {
+	if (argc > 3) {
 		printf("Error: Too many arguments. All the excess arguments will be ignored.\n");
 	}
 
@@ -171,7 +182,7 @@ int main(int argc, char** argv){
 			char * tempFileName = createFileName(fileCounter);
 			FILE * outputFile = fopen(tempFileName, "w");
 			free(tempFileName);
-			for (int i = 0; i < length; i++){
+			for (int i = 0; i < (int)length; i++){
 				fprintf(outputFile, "%lf ", numArray[i]);
 			}
 			fclose(outputFile);
