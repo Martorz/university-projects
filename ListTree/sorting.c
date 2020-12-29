@@ -1,31 +1,51 @@
 #include <stdio.h>
 #include <assert.h>
 #include <string.h>
+#include <stdlib.h>
 
-void swap (int * x, int * y){
+void swap (void * x, void * y, size_t size){
 	assert(x && y);
-	int t = *x;
-	*x = *y;
-	*y = t;
+	void * t = malloc(size);
+	memcpy(t, x, size);
+	memcpy(x, y, size);
+	memcpy(y, t, size);
+
+	free(t);
 }
 
-void compareLTU (int * x, int * y){
-	if (*x < *y) {
-		swap(x, y);
+int compareLTU (void * x, void * y){
+	int * a = x;
+	int * b = y;
+	if (*a < *b) {
+		return 1;
+	}
+	else {
+		return 0;
 	}
 }
 
-void compareUTL (int * x, int * y){
-	if (*x > *y) {
-		swap(x, y);
+int compareUTL (void * x, void * y){
+	int * a = x;
+	int * b = y;
+	if (*a > *b) {
+		return 1;
+	}
+	else {
+		return 0;
 	}
 }
 
-void mysort (int * arr, size_t num, void (*comparator)(int*, int*)){
+void mysort (void * arr, size_t num, size_t size, int (*comparator)(void*, void*)){
+	assert(NULL != arr);
+
+	char * array = (char *)arr; 
+
 	for (size_t i = 0; i < num; i++) {
 		for (size_t j = 0; j < num; j++) {
-			comparator(arr + i, arr + j);
+			if (comparator(array + i * size, array + j * size) == 1) {
+				swap(array + i * size, array + j * size, size);
+			} 
+			
 		}
 	}
-
 }

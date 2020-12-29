@@ -1,10 +1,10 @@
 #ifndef SORTING_H
 #define SORTING_H
 
-void mysort (int* arr, size_t num, void (*comparator)(int*, int*));  //приделать void*
+int compareLTU (void * x, void * y);
 
-void compareLTU (int * x, int * y);
+int compareUTL (void * x, void * y);
 
-void compareUTL (int * x, int * y);
+void mysort (void * arr, size_t num, size_t size, int (*comparator)(void*, void*));
 
 #endif

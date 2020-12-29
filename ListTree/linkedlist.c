@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stddef.h>
+#include <stdio.h>
 
 
 struct list {
@@ -9,9 +10,9 @@ struct list {
 
 void insertLast(struct list** h, int data) {
 
-	struct list *link = calloc(1, sizeof(struct list*));
-
+	struct list *link = calloc(1, sizeof(*link));
 	link->x = data;
+	link->next = NULL;
 
    	if (*h != NULL){
 		struct list* findLast = *h;
@@ -22,6 +23,14 @@ void insertLast(struct list** h, int data) {
 	}
 	else {
 		*h = link;
+	}
+}
+
+void printList(struct list* h){
+	printf("%d \n", h->x);
+	while (h->next != NULL){
+		h = h->next;
+		printf("%d \n", h->x);
 	}
 }
 
@@ -41,20 +50,21 @@ void insertByIndex(struct list* h, size_t idx, int data){
 	h->x = data;
 }
 
-void removeNode(struct list** changeableHead, struct list* h, size_t index){
+void removeNode(struct list** h, size_t index){
 	size_t k = 0;
+	struct list* currentNode = *h;
 	struct list *previous = NULL;
 	if (index == 0) {
-		*changeableHead = h->next;
+		*h = currentNode->next;
 	}
 	else {
 		for (k = 0; k < index; k++){
-			previous = h;
-			h = h->next;
+			previous = currentNode;
+			currentNode = currentNode->next;
 		}
-		previous->next = h->next;
+		previous->next = currentNode->next;
 	}
-	free(h);
+	free(currentNode);
 }
 
 size_t findMinItemID(struct list * arr) {

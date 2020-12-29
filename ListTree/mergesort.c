@@ -1,7 +1,6 @@
 /*
 	* returns the name of sorted file
 */
-
 #include <stddef.h>
 #include <stdio.h>
 #include <string.h>
@@ -31,25 +30,42 @@ char * numToStr (size_t number, size_t numLen) {
 }
 
 char * createFileName(size_t fileCounter) {
+	const char * tempName = "temp_";
 	char * numberEnding = numToStr(fileCounter, numLength(fileCounter));
-	char * outputFileName = calloc(strlen("temp_") + numLength(fileCounter) + 1, sizeof(char));
-	strncpy(outputFileName, "temp_", strlen("temp_") + 1);
+	char * outputFileName = calloc(strlen(tempName) + numLength(fileCounter) + 1, sizeof(char));
+	strncpy(outputFileName, tempName, strlen(tempName) + 1);
 	strcat(outputFileName, numberEnding);
 	free(numberEnding);
 	//outputFileName[strlen("temp_") + numLength(fileCounter)] = '';
 	return outputFileName;
 }
 
-void fillWithZero(int * array, size_t length){ //change for memset
+void fillWithZero(int * array, size_t length){
 	for (int i = 0; i < (int)length; i++) {
 		array[i] = 0;
 	}
 }
 
+int fileExist(char * fileName) {
+	FILE * input;
+    if (input = fopen(fileName, "r")){
+        fclose(input);
+        return 1;
+    }
+    return 0;
+}
+
 void readTempFiles(size_t length, FILE ** inputFiles, struct list ** firstItems) {
 	for (int i = 0; i < (int)length; i++) {
 		char * tempFileName = createFileName(i + 1);
-		inputFiles[i] = fopen(tempFileName, "r");
+		// ----------------------------------------------------------------------------------> GARBAGE
+		if (fileExist(tempFileName) == 0) {
+			printf("Error: Invalid file name. File name: %s\n", tempFileName);
+			i--;
+		}
+		else{
+			inputFiles[i] = fopen(tempFileName, "r");
+		}
 		free(tempFileName);
 	}
 
@@ -62,12 +78,11 @@ void readTempFiles(size_t length, FILE ** inputFiles, struct list ** firstItems)
 	}
 }
 
-void sortTempFiles(FILE ** inputFiles, FILE * outputFile, int fileCounter, int entriesCounter) {
+void sortTempFiles(FILE ** inputFiles, FILE * outputFile, int fileCounter, int entriesCounter, char * flag) {
 	
 	struct list *firstItems = NULL;
-	
-	readTempFiles(fileCounter, inputFiles, &firstItems);
 
+	readTempFiles(fileCounter, inputFiles, &firstItems);
 	struct list *fileArrayID = NULL;
 	for (int i = 0; i < fileCounter; i++) {
 		insertLast(&fileArrayID, i);
@@ -75,24 +90,43 @@ void sortTempFiles(FILE ** inputFiles, FILE * outputFile, int fileCounter, int e
 	
 	int itemID;
 	size_t (*finder) (struct list *);
-	finder = findMinItemID;
-
+	if (strcmp(flag, "-ltu") == 0) {
+			finder = findMinItemID;
+		}
+	else {
+		finder = findMaxItemID;
+	}
 	for (int i = 0; i < entriesCounter; i++){
+
 		itemID = finder(firstItems);
 		fprintf(outputFile, "%d ", getByIndex(firstItems, itemID));
 		int reader = 0;
 		if (fscanf(inputFiles[(int)(getByIndex(fileArrayID, itemID))], "%d", &reader) <= 0) {
-			removeNode(&firstItems, firstItems, itemID);
-			removeNode(&fileArrayID, fileArrayID, itemID);
+			removeNode(&firstItems, itemID);
+			removeNode(&fileArrayID, itemID);
 		}
 		else {
 			insertByIndex(firstItems, itemID, reader);
 		}
 	}
+
+	clearList(firstItems);
+	clearList(fileArrayID);
 }
 
-
 char * mergeSort(char * inputFileName) {
+	if (inputFileName == NULL){
+		printf("Error: File reading error. File name is missing.\n");
+		return "";
+	}
+
+	if (fileExist(inputFileName) == 0) {
+		printf("Error: Invalid file name. File name: %s\n", inputFileName);
+		return "";
+	}
+
+	char * flag = "-ltu";
+
 	int fileCounter = 0;
 	int entriesCounter = 0;
 	int readResult = 1;
@@ -112,7 +146,12 @@ char * mergeSort(char * inputFileName) {
 			entriesCounter--;
 		}
 
-		mysort(numArray, length, &compareLTU);
+		if (strcmp(flag, "-ltu") == 0) {
+			mysort(numArray, length, sizeof(int), compareLTU);	
+		}
+		else {
+			mysort(numArray, length, sizeof(int), compareUTL);
+		}
 
 		if (length != 0) {
 			fileCounter++;
@@ -135,7 +174,7 @@ char * mergeSort(char * inputFileName) {
 	FILE ** inputFiles = (FILE**)calloc(fileCounter, sizeof(FILE*));
 	FILE * outputFile = fopen("sortedList.txt", "w");
 
-	sortTempFiles(inputFiles, outputFile, fileCounter, entriesCounter);
+	sortTempFiles(inputFiles, outputFile, fileCounter, entriesCounter, flag);
 
 	// *** DELETING TEMP FILES ***
 

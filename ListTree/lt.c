@@ -10,18 +10,10 @@
 #include "mergesort.h"
 #include "tree.h"
 
-int fileExist(char * fileName) {
-	FILE * input;
-    if (input = fopen(fileName, "r")){
-        fclose(input);
-        return 1;
-    }
-    return 0;
-}
 
 int main(int argc, char** argv){
 	if (argv[1] == NULL){
-		printf("Error: File reading error. File name: %s\n", argv[1]);
+		printf("Error: File reading error. File name is missing.\n");
 		return -1;
 	}
 
@@ -30,20 +22,20 @@ int main(int argc, char** argv){
 		return -1;
 	}
 
-	if (argv[2] != NULL) {
-		printf("Error: Too many arguments. All the excess arguments will be ignored.");
+	if (argc != 2) {
+		printf("Error: Too many arguments. All the excess arguments will be ignored.\n");
 	}
 
 	char * inputFileName = argv[1];
 
 	char * sortedListName = mergeSort(inputFileName);
 
-	FILE * inputFile = fopen(sortedListName, "rb");
+	FILE * inputFile = fopen(sortedListName, "r");
 	struct list *numberList = NULL;
 	int listLength = 0;
 	int readResult = 1;
-
-	while (readResult > 0) {
+	
+	while (readResult == 1) {
 		int reader = 0;
 		readResult = fscanf(inputFile, "%d", &reader);
 		insertLast(&numberList, reader);
@@ -52,9 +44,8 @@ int main(int argc, char** argv){
 
 	if (readResult <= 0) {
 		listLength--;
-		removeNode(&numberList, numberList, listLength);
+		removeNode(&numberList, listLength);
 	}
-
 	node * root = NULL;
 	root = linkedListIntoAVL(numberList, listLength);
 
