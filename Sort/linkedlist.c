@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stddef.h>
+#include <stdio.h>
 
 
 struct list {
@@ -9,9 +10,9 @@ struct list {
 
 void insertLast(struct list** h, double data) {
 
-	struct list *link = calloc(1, sizeof(struct list*));
-
+	struct list *link = calloc(1, sizeof(*link));
 	link->x = data;
+	link->next = NULL;
 
    	if (*h != NULL){
 		struct list* findLast = *h;
@@ -22,6 +23,14 @@ void insertLast(struct list** h, double data) {
 	}
 	else {
 		*h = link;
+	}
+}
+
+void printList(struct list* h){
+	printf("%lf \n", h->x);
+	while (h->next != NULL){
+		h = h->next;
+		printf("%lf \n", h->x);
 	}
 }
 
@@ -74,6 +83,7 @@ size_t findMinItemID(struct list * arr) {
 }
 
 size_t findMaxItemID(struct list * arr) {
+	
 	size_t itemID = 0;
 	size_t counter = 0;
 	double itemValue = getByIndex(arr, itemID);

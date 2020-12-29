@@ -76,7 +76,7 @@ void readTempFiles(size_t length, FILE ** inputFiles, struct list ** firstItems)
 	}
 
 	double reader = 0;
-	for (int i = 0; i < (int)length; i++) { //путаница с сайз т и интом
+	for (int i = 0; i < (int)length; i++) {
 		if (NULL != inputFiles[i]) {
 			fscanf(inputFiles[i], "%lf", &reader);
 			insertLast(firstItems, reader);
@@ -87,9 +87,8 @@ void readTempFiles(size_t length, FILE ** inputFiles, struct list ** firstItems)
 void sortTempFiles(FILE ** inputFiles, FILE * outputFile, int fileCounter, int entriesCounter, char * flag) {
 	
 	struct list *firstItems = NULL;
-	
-	readTempFiles(fileCounter, inputFiles, &firstItems);
 
+	readTempFiles(fileCounter, inputFiles, &firstItems);
 	struct list *fileArrayID = NULL;
 	for (int i = 0; i < fileCounter; i++) {
 		insertLast(&fileArrayID, i);
@@ -103,8 +102,8 @@ void sortTempFiles(FILE ** inputFiles, FILE * outputFile, int fileCounter, int e
 	else {
 		finder = findMaxItemID;
 	}
-
 	for (int i = 0; i < entriesCounter; i++){
+
 		itemID = finder(firstItems);
 		fprintf(outputFile, "%lf ", getByIndex(firstItems, itemID));
 		double reader = 0;

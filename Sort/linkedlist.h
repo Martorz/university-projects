@@ -6,6 +6,8 @@ struct list;
 
 void insertLast(struct list** h, double data);
 
+void printList(struct list* h);
+
 double getByIndex(struct list* h, size_t idx);
 
 void insertByIndex(struct list* h, size_t idx, double data);
